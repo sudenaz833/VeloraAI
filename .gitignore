@@ -1,0 +1,21 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+*.user
+
+# Docker
+.docker/
+
+# Local build / package artifacts
+bin/
+obj/
+node_modules/
+dist/
