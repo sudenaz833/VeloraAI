@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: shop_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: my_secure_password
+      POSTGRES_DB: shop_db_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./ShopAPI
+      dockerfile: Dockerfile
+    container_name: shop_backend
+    restart: always
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=shop_db_dev;Username=postgres_user;Password=my_secure_password
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./ShopAPIFrontend
+      dockerfile: Dockerfile
+    container_name: shop_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

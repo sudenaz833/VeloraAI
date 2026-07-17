@@ -1,0 +1,13 @@
+namespace ShopAPI.DTOs
+{
+    public class OrderReadDto
+    {
+        public int OrderId { get; set; }
+        public int CustomerId { get; set; }
+        public string? ProductName { get; set;}
+        public decimal TotalPrice { get; set; }
+        public string? OrderStatus { get; set; }
+   
+        public DateTime CreatedAt { get; set; }
+    }
+} 

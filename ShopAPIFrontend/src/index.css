@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Outfit", sans-serif;
+
+  --color-gold-50: #FAF6F0;
+  --color-gold-100: #F3EBE0;
+  --color-gold-200: #E6D7C2;
+  --color-gold-300: #D5BE9E;
+  --color-gold-400: #C5A880;
+  --color-gold-500: #AB8E66;
+  --color-gold-600: #8E734E;
+  --color-gold-700: #715B3E;
+  --color-gold-800: #55442E;
+  --color-gold-900: #3D3021;
+
+  --color-charcoal-50: #F6F6F6;
+  --color-charcoal-100: #E7E7E7;
+  --color-charcoal-200: #D1D1D1;
+  --color-charcoal-300: #B0B0B0;
+  --color-charcoal-400: #888888;
+  --color-charcoal-500: #6D6D6D;
+  --color-charcoal-600: #5D5D5D;
+  --color-charcoal-700: #4f4f4f;
+  --color-charcoal-800: #2a2a2a;
+  --color-charcoal-900: #1a1a1a;
+  --color-charcoal-950: #121212;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-charcoal-950);
+  color: var(--color-charcoal-100);
+}
+
+/* =========================================================================
+   VELORA PREMIUM TOASTIFY CUSTOM STYLES
+   ========================================================================= */
+.Toastify__toast-container {
+  font-family: var(--font-sans) !important;
+}
+
+.Toastify__toast {
+  background-color: #1a1a1a !important; /* Charcoal-900 */
+  color: #f6f6f6 !important; /* Charcoal-50 */
+  border: 1px solid #2a2a2a !important; /* Charcoal-800 */
+  border-radius: 0px !important; /* Keskin lüks kenarlar */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+  padding: 16px 20px !important;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+
+
+.Toastify__toast--success {
+  border-left: 3px solid #c5a880 !important; 
+}
+
+.Toastify__toast--error {
+  border-left: 3px solid #d9534f !important;
+}
+
+
+.Toastify__toast--warning {
+  border-left: 3px solid #ab8e66 !important; 
+}
+
+.Toastify__close-button {
+  color: #888888 !important;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.Toastify__close-button:hover {
+  color: #c5a880 !important;
+  opacity: 1;
+}
+
+.Toastify__progress-bar {
+  background: linear-gradient(to right, #ab8e66, #c5a880, #e6d7c2) !important;
+  height: 2px !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #d9534f !important;
+}

@@ -1,0 +1,11 @@
+# .NET Core ignore kuralları
+/bin
+/obj
+/.vs
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.ntvs-361
+appsettings.Development.json
