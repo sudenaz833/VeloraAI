@@ -12,8 +12,13 @@ import {
   Loader2,
   Sparkles,
   ShoppingBag,
-  Clock
+  Clock,
+  Edit,
+  X,
+  Save,
+  Lock
 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -22,6 +27,18 @@ function Profile() {
   const [orders, setOrders] = useState([]);
   const [basketCount, setBasketCount] = useState(0);
   const navigate = useNavigate();
+
+  // Profil Güncelleme Modal State'leri
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    password: ''
+  });
 
   useEffect(() => {
     // 1. Oturum Kontrolü
@@ -39,8 +56,16 @@ function Profile() {
 
         const response = await api.get('customers/my-profile');
         setProfile(response.data);
+        setFormData({
+          firstName: response.data.firstName || '',
+          lastName: response.data.lastName || '',
+          email: response.data.email || '',
+          phone: response.data.phone || '',
+          address: response.data.address || '',
+          password: ''
+        });
 
-        
+        // Sipariş Geçmişi
         try {
           const ordersResponse = await api.get(`order/customer/${response.data.customerId}`);
           setOrders(ordersResponse.data);
@@ -52,7 +77,7 @@ function Profile() {
           }
         }
 
-        // Sepetteki ürün adetlerini al (Sadece User rolü için sepet çekilir)
+        // Sepetteki ürün adetlerini al (Sadece User rolü için)
         if (response.data.role !== 'Admin') {
           try {
             const basketResponse = await api.get('basket');
@@ -82,6 +107,50 @@ function Profile() {
 
     fetchProfileData();
   }, [navigate]);
+
+  // Modal Açma Mantığı
+  const handleOpenEditModal = () => {
+    if (profile) {
+      setFormData({
+        firstName: profile.firstName || '',
+        lastName: profile.lastName || '',
+        email: profile.email || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        password: ''
+      });
+    }
+    setIsEditModalOpen(true);
+  };
+
+  // Profil Güncelleme Form Gönderimi
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      setSubmitting(true);
+      const updatePayload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+      };
+
+      if (formData.password && formData.password.trim() !== '') {
+        updatePayload.password = formData.password;
+      }
+
+      const response = await api.put('customers', updatePayload);
+      setProfile(response.data);
+      toast.success('Profil bilgileriniz başarıyla güncellendi.');
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error('Profil güncelleme hatası:', err);
+      toast.error('Profil bilgileri güncellenirken bir hata oluştu.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Çıkış Yapma Mantığı
   const handleLogout = () => {
@@ -139,7 +208,7 @@ function Profile() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
 
-            {/* Sol Kart - Özet Profil Bilgisi */}
+            {/* Sol Kart - Özet Profil Bilgisi & Düzenle Butonu */}
             <div className="bg-white p-8 border border-charcoal-100 flex flex-col items-center text-center space-y-6">
               <div className="w-20 h-20 bg-gold-50 border border-gold-200 rounded-full flex items-center justify-center text-gold-600 relative">
                 <User className="w-10 h-10" />
@@ -157,6 +226,15 @@ function Profile() {
                 </span>
               </div>
 
+              {/* Bilgileri Düzenle Butonu */}
+              <button
+                onClick={handleOpenEditModal}
+                className="w-full bg-charcoal-900 text-white text-xs tracking-widest uppercase font-medium py-3 px-4 hover:bg-charcoal-800 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <Edit className="w-3.5 h-3.5 text-gold-400" />
+                <span>Bilgileri Düzenle</span>
+              </button>
+
               <div className="w-full pt-6 border-t border-charcoal-50 flex justify-around text-center">
                 <div>
                   <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Siparişler</p>
@@ -166,10 +244,11 @@ function Profile() {
                 </div>
                 <div className="w-[1px] bg-charcoal-100" />
                 <div>
-                 <Link to="/cart"> <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Sepetim</p>
-                  <p className="text-sm font-semibold text-charcoal-800 mt-1 flex items-center gap-1 justify-center">
-                    <ShoppingBag className="w-3.5 h-3.5 text-gold-500" /> {basketCount}
-                  </p>
+                  <Link to="/cart">
+                    <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Sepetim</p>
+                    <p className="text-sm font-semibold text-charcoal-800 mt-1 flex items-center gap-1 justify-center">
+                      <ShoppingBag className="w-3.5 h-3.5 text-gold-500" /> {basketCount}
+                    </p>
                   </Link>
                 </div>
               </div>
@@ -178,10 +257,18 @@ function Profile() {
             {/* Sağ Kart - Detaylı Bilgiler */}
             <div className="md:col-span-2 bg-white p-8 md:p-10 border border-charcoal-100 space-y-8">
 
-              <div>
-                <h4 className="font-serif text-xl text-charcoal-900 tracking-wide font-light">Hesap Detayları</h4>
-                <p className="text-charcoal-400 text-xs mt-1">Velora premium cilt bakım üyelik kartınızdaki kişisel detaylar.</p>
-                <div className="w-12 h-[1px] bg-gold-400 mt-3" />
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-serif text-xl text-charcoal-900 tracking-wide font-light">Hesap Detayları</h4>
+                  <p className="text-charcoal-400 text-xs mt-1">Velora premium cilt bakım üyelik kartınızdaki kişisel detaylar.</p>
+                  <div className="w-12 h-[1px] bg-gold-400 mt-3" />
+                </div>
+                <button
+                  onClick={handleOpenEditModal}
+                  className="text-xs text-gold-600 hover:text-gold-700 font-semibold tracking-wider uppercase flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  <Edit className="w-3.5 h-3.5" /> Düzenle
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -190,7 +277,7 @@ function Profile() {
                 <div className="space-y-1">
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Adı</span>
                   <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
-                    {profile?.firstName}
+                    {profile?.firstName || 'Belirtilmemiş'}
                   </div>
                 </div>
 
@@ -198,7 +285,7 @@ function Profile() {
                 <div className="space-y-1">
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Soyadı</span>
                   <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
-                    {profile?.lastName}
+                    {profile?.lastName || 'Belirtilmemiş'}
                   </div>
                 </div>
 
@@ -208,7 +295,7 @@ function Profile() {
                     <Mail className="w-3.5 h-3.5" /> E-posta Adresi
                   </span>
                   <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
-                    {profile?.email}
+                    {profile?.email || 'Belirtilmemiş'}
                   </div>
                 </div>
 
@@ -222,8 +309,18 @@ function Profile() {
                   </div>
                 </div>
 
+                {/* Adres */}
+                <div className="space-y-1 sm:col-span-2">
+                  <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5" /> Teslimat Adresi
+                  </span>
+                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100 whitespace-pre-wrap">
+                    {profile?.address || 'Belirtilmemiş (Henüz adres eklenmedi)'}
+                  </div>
+                </div>
+
                 {/* Rol / Yetki */}
-                <div className="space-y-1">
+                <div className="space-y-1 sm:col-span-2">
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
                     <Shield className="w-3.5 h-3.5" /> Üyelik Tipi
                   </span>
@@ -257,16 +354,16 @@ function Profile() {
                         <div className="text-right space-y-1">
                           <span className="font-semibold text-charcoal-900 block">{order.totalPrice} TL</span>
                           <span className="inline-block text-[10px] bg-gold-100/60 text-gold-800 font-semibold px-2.5 py-0.5 rounded-sm uppercase tracking-wider">
-                            {order.orderStatus || 'Hazırlanıyor.'}
+                            {order.orderStatus || 'Hazırlanıyor'}
                           </span>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-            </div>
+              </div>
 
-              {/* Ekstra Lüks Kozmetik Marka Sloganı / Bilgilendirme Kutusu */}
+              {/* Lüks Kozmetik Marka Sloganı */}
               <div className="bg-gold-50/50 border border-gold-200/50 p-4.5 text-xs text-gold-900 leading-relaxed font-light">
                 <p className="font-serif italic text-gold-800 text-sm mb-1">Cildinize Özel Seçkin Deneyim</p>
                 Velora üyesi olarak, cilt tipinize özel hazırlanan ürün lansmanlarına, kişisel indirim kuponlarına ve özel bakım davetiyelerine öncelikli erişim hakkınız bulunmaktadır.
@@ -278,6 +375,138 @@ function Profile() {
         )}
 
       </main>
+
+      {/* Profil Güncelleme Modalı */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white border border-charcoal-100 max-w-lg w-full p-6 md:p-8 space-y-6 relative shadow-2xl animate-in fade-in zoom-in duration-200">
+            
+            {/* Modal Başlığı & Kapatma Butonu */}
+            <div className="flex justify-between items-center border-b border-charcoal-100 pb-4">
+              <div>
+                <h3 className="font-serif text-xl text-charcoal-900 font-light tracking-wide">Profil Bilgilerini Güncelle</h3>
+                <p className="text-xs text-charcoal-400 mt-0.5">Kişisel bilgilerinizi ve teslimat adresinizi düzenleyebilirsiniz.</p>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-charcoal-400 hover:text-charcoal-900 transition-colors p-1 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Güncelleme Formu */}
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Ad */}
+                <div className="space-y-1">
+                  <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Ad</label>
+                  <input
+                    type="text"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
+                    required
+                  />
+                </div>
+
+                {/* Soyad */}
+                <div className="space-y-1">
+                  <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Soyad</label>
+                  <input
+                    type="text"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* E-posta */}
+              <div className="space-y-1">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">E-posta Adresi</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
+                  required
+                />
+              </div>
+
+              {/* Telefon */}
+              <div className="space-y-1">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Telefon Numarası</label>
+                <input
+                  type="text"
+                  placeholder="05XX XXX XX XX"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
+                />
+              </div>
+
+              {/* Adres */}
+              <div className="space-y-1">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Teslimat Adresi</label>
+                <textarea
+                  rows="3"
+                  placeholder="Mahalle, sokak, bina no, ilçe/il..."
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light resize-none"
+                />
+              </div>
+
+              {/* Şifre Güncelleme (İsteğe Bağlı) */}
+              <div className="space-y-1 pt-2 border-t border-charcoal-100">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Yeni Şifre (İsteğe Bağlı)
+                </label>
+                <input
+                  type="password"
+                  placeholder="Değiştirmek istemiyorsanız boş bırakın"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
+                />
+              </div>
+
+              {/* Butonlar */}
+              <div className="flex gap-3 pt-4 border-t border-charcoal-100 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="text-xs tracking-widest text-charcoal-500 hover:text-charcoal-800 uppercase font-medium py-3 px-5 border border-charcoal-200 cursor-pointer transition-colors"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-widest uppercase font-medium py-3 px-6 transition-all duration-300 flex items-center gap-2 cursor-pointer disabled:bg-charcoal-300"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-gold-400" />
+                      Kaydediliyor...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 text-gold-400" />
+                      Değişiklikleri Kaydet
+                    </>
+                  )}
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
