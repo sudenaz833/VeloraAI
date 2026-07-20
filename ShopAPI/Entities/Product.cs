@@ -31,6 +31,18 @@ namespace ShopAPI.Entities
         [Column("discountExpiresAt")]
         public DateTime? DiscountExpiresAt { get; set; }
         
+        [Column("activeIngredients")]
+         public List<string>? ActiveIngredients { get; set; } = new List<string>();
+         
+        [Column("skinTypes")]
+        public List<string>? SkinTypes { get; set; } = new List<string>();
+
+        [Column("concerns")]
+        public List<string>? Concerns { get; set; } = new List<string>();
+
+        [Column("usageTime")]
+        public string? UsageTime {get; set;}
+        
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [System.Text.Json.Serialization.JsonIgnore]
