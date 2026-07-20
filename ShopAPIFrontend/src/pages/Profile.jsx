@@ -45,7 +45,6 @@ function Profile() {
           const ordersResponse = await api.get(`order/customer/${response.data.customerId}`);
           setOrders(ordersResponse.data);
         } catch (orderErr) {
-   
           if (orderErr.response && orderErr.response.status === 404) {
             setOrders([]);
           } else {

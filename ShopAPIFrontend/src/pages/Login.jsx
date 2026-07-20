@@ -179,7 +179,7 @@ function Login() {
                 <p className="font-medium">İşlem Başarılı!</p>
                 <p className="mt-0.5 opacity-90">
                   {activeTab === 'login'
-                    ? 'Başarıyla giriş yapıldı. Token kaydedildi.'
+                    ? 'Başarıyla giriş yapıldı.'
                     : 'Hesabınız başarıyla oluşturuldu.'}
                 </p>
               </div>
