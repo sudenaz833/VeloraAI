@@ -1,0 +1,14 @@
+# Docker Build Context İyileştirmesi (Render Hızlandırma)
+.git
+.gitignore
+.vscode
+.idea
+
+# Frontend bağımlılıklarını Docker backend derlemesine gönderme
+ShopAPIFrontend/node_modules
+ShopAPIFrontend/dist
+ShopAPIFrontend/build
+
+# .NET geçici dosyaları
+**/bin
+**/obj
