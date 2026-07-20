@@ -430,15 +430,27 @@ function AdminDashboard() {
                           <span className="text-charcoal-500 text-[11px] block">{customerEmail}</span>
                         </td>
                         <td className="p-4 text-charcoal-800">
-                          <div className="flex flex-wrap gap-1.5 max-w-md">
-                            {productSummary.split(', ').map((prod, idx) => (
-                              <span
-                                key={idx}
-                                className="inline-flex items-center bg-gold-50/80 border border-gold-200/60 text-gold-900 text-[11px] font-medium px-2.5 py-1 rounded-sm shadow-2xs"
-                              >
-                                {prod}
-                              </span>
-                            ))}
+                          <div className="flex flex-col gap-1.5 max-w-md">
+                            {productSummary.split(', ').map((prod, idx) => {
+                              const match = prod.match(/(.+)\s+\((\d+)\s*Adet\)/i) || prod.match(/(.+)\s+\((\d+)\)/);
+                              const name = match ? match[1].trim() : prod;
+                              const count = match ? match[2] : '1';
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex items-center justify-between gap-3 bg-white border border-gold-200/70 px-3 py-1.5 rounded-sm shadow-2xs hover:border-gold-400 transition-all duration-200"
+                                >
+                                  <span className="font-serif font-medium text-charcoal-900 text-xs truncate max-w-[180px] sm:max-w-[240px]" title={name}>
+                                    {name}
+                                  </span>
+                                  <span className="shrink-0 bg-gold-100/90 border border-gold-300/80 text-gold-900 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                    <span className="text-[9px] text-gold-700">x</span>
+                                    <span>{count} Adet</span>
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </td>
                         <td className="p-4 text-charcoal-400 whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</td>
