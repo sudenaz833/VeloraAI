@@ -98,43 +98,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-using (var scope = app.Services.CreateScope())
+// Veritabanı migration işlemini arka planda çalıştır (Port açılışını engellememesi için)
+Task.Run(() =>
 {
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
         var context = services.GetRequiredService<ShopDbContext>();
-        
-        // Docker'da veritabanının hazır olmasını beklemek için yeniden deneme döngüsü
-        int retryCount = 0;
-        int maxRetries = 6;
-        while (retryCount < maxRetries)
-        {
-            try
-            {
-                logger.LogInformation("Veritabanı bağlantısı kontrol ediliyor ve bekleyen migration'lar uygulanıyor...");
-                context.Database.Migrate(); // Tabloları otomatik oluşturur ve migration'ları uygular
-                logger.LogInformation("Veritabanı hazır ve tüm tablolar oluşturuldu.");
-                break;
-            }
-            catch (Exception ex)
-            {
-                retryCount++;
-                if (retryCount >= maxRetries)
-                {
-                    logger.LogError(ex, "Veritabanına bağlanılamadı. Maksimum deneme sınırına ulaşıldı.");
-                    throw;
-                }
-                logger.LogWarning($"Veritabanı henüz hazır değil. 3 saniye içinde tekrar denenecek... (Deneme {retryCount}/{maxRetries})");
-                System.Threading.Thread.Sleep(3000);
-            }
-        }
+        logger.LogInformation("Veritabanı bağlantısı kontrol ediliyor ve bekleyen migration'lar uygulanıyor...");
+        context.Database.Migrate();
+        logger.LogInformation("Veritabanı hazır ve tüm tablolar oluşturuldu.");
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Veritabanı ilklendirilirken kritik bir hata oluştu.");
+        logger.LogError(ex, "Veritabanı ilklendirilirken bir hata oluştu: " + ex.Message);
     }
-}
+});
 
 app.Run();

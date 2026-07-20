@@ -14,6 +14,7 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV ASPNETCORE_URLS=http://+:8080
 COPY --from=build /app .
 
 EXPOSE 8080
