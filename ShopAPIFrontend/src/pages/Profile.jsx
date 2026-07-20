@@ -42,7 +42,7 @@ function Profile() {
 
   useEffect(() => {
     // 1. Oturum Kontrolü
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       navigate('/');
       return;
@@ -97,7 +97,7 @@ function Profile() {
         setError('Profil bilgileri alınamadı. Lütfen tekrar giriş yapın.');
 
         if (err.response && err.response.status === 401) {
-          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
           navigate('/');
         }
       } finally {
@@ -154,7 +154,7 @@ function Profile() {
 
   // Çıkış Yapma Mantığı
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     navigate('/');
   };
 

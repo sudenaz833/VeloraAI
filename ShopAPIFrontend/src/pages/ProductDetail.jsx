@@ -34,7 +34,7 @@ function ProductDetail() {
     const [editingRating, setEditingRating] = useState(5);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             navigate('/');
             return;

@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 // otomatik olarak  tokenı  http başlığında backende iletme 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,8 +28,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
 
     if (error.response && error.response.status === 401) {
-      console.warn('Unauthorized request. Clearing local storage token.');
-      localStorage.removeItem('token');
+      console.warn('Unauthorized request. Clearing session storage token.');
+      sessionStorage.removeItem('token');
     }
     return Promise.reject(error);
   }

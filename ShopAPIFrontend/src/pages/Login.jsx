@@ -42,7 +42,7 @@ function Login() {
         const token = response.data?.token || response.data?.Token || response.data;
 
         if (token && typeof token === 'string') {
-          localStorage.setItem('token', token);//tarayıcının yerel hafızasına eklenir.refresh sonrası otourum acık kalır
+          sessionStorage.setItem('token', token);//tarayıcının oturum hafızasına eklenir. sekmeler arası izole kalır
           setSuccess(true);
           setEmail('');
           setPassword('');
