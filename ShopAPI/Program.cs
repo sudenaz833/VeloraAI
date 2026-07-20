@@ -33,14 +33,13 @@ builder.Services.AddScoped<ICommentService,CommentService>();
 
 builder.Services.AddCors(options =>
 {
-options.AddPolicy("AllowVercel",
-policy =>
-{
-policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "https://shopapi-frontend.vercel.app")
-.AllowAnyHeader()
-.AllowAnyMethod()
-.AllowCredentials();
-});
+    options.AddPolicy("AllowVercel", policy =>
+    {
+        policy.SetIsOriginAllowed(_ => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 }); 
 
 // 2. JWT Ayarları (Anahtarı burada tek bir noktadan yönetiyoruz)
