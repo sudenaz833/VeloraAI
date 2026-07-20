@@ -290,80 +290,99 @@ function ProductDetail() {
                         </div>
 
                         {/* Cilt Bakımı & Dermokozmetik Formül Özellikleri (AI Alanları) */}
-                        <div className="bg-[#FAF8F5] border border-gold-200/80 p-4 sm:p-5 space-y-3.5 rounded-sm">
-                            <div className="flex items-center gap-2 border-b border-gold-200/60 pb-2.5">
-                                <Sparkles className="w-4 h-4 text-gold-600" />
-                                <h3 className="font-serif text-xs sm:text-sm tracking-widest text-charcoal-900 uppercase font-medium">
-                                    Cilt Bakım Formülü & Dermokozmetik Detaylar
-                                </h3>
-                            </div>
+                        {(() => {
+                            const parseList = (val) => {
+                                if (!val) return [];
+                                if (Array.isArray(val)) return val;
+                                if (typeof val === 'string') return val.split(',').map(s => s.trim()).filter(Boolean);
+                                return [];
+                            };
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-                                
-                                {/* Aktif İçerikler */}
-                                {product.activeIngredients && product.activeIngredients.length > 0 && (
-                                    <div className="space-y-1 sm:col-span-2">
-                                        <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                            <Sparkles className="w-3 h-3 text-gold-500" /> Aktif İçerikler
-                                        </span>
-                                        <div className="flex flex-wrap gap-1.5 pt-0.5">
-                                            {product.activeIngredients.map((ing, idx) => (
-                                                <span key={idx} className="bg-white border border-gold-200 text-charcoal-800 text-[11px] px-2.5 py-0.5 font-medium rounded-xs shadow-2xs">
-                                                    {ing}
+                            const activeIngredientsList = parseList(product.activeIngredients);
+                            const skinTypesList = parseList(product.skinTypes);
+                            const concernsList = parseList(product.concerns);
+
+                            const hasData = activeIngredientsList.length > 0 || skinTypesList.length > 0 || concernsList.length > 0 || product.usageTime;
+
+                            if (!hasData) return null;
+
+                            return (
+                                <div className="bg-[#FAF8F5] border border-gold-200/80 p-4 sm:p-5 space-y-3.5 rounded-sm">
+                                    <div className="flex items-center gap-2 border-b border-gold-200/60 pb-2.5">
+                                        <Sparkles className="w-4 h-4 text-gold-600" />
+                                        <h3 className="font-serif text-xs sm:text-sm tracking-widest text-charcoal-900 uppercase font-medium">
+                                            Cilt Bakım Formülü & Dermokozmetik Detaylar
+                                        </h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                                        
+                                        {/* Aktif İçerikler */}
+                                        {activeIngredientsList.length > 0 && (
+                                            <div className="space-y-1 sm:col-span-2">
+                                                <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
+                                                    <Sparkles className="w-3 h-3 text-gold-500" /> Aktif İçerikler
                                                 </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                                    {activeIngredientsList.map((ing, idx) => (
+                                                        <span key={idx} className="bg-white border border-gold-200 text-charcoal-800 text-[11px] px-2.5 py-0.5 font-medium rounded-xs shadow-2xs">
+                                                            {ing}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
-                                {/* Uygun Cilt Tipleri */}
-                                {product.skinTypes && product.skinTypes.length > 0 && (
-                                    <div className="space-y-1">
-                                        <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                            <Shield className="w-3 h-3 text-gold-500" /> Uygun Cilt Tipleri
-                                        </span>
-                                        <div className="flex flex-wrap gap-1 pt-0.5">
-                                            {product.skinTypes.map((st, idx) => (
-                                                <span key={idx} className="bg-emerald-50/90 border border-emerald-200 text-emerald-950 text-[10px] px-2 py-0.5 rounded-full font-medium">
-                                                    {st}
+                                        {/* Uygun Cilt Tipleri */}
+                                        {skinTypesList.length > 0 && (
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
+                                                    <Shield className="w-3 h-3 text-gold-500" /> Uygun Cilt Tipleri
                                                 </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                                <div className="flex flex-wrap gap-1 pt-0.5">
+                                                    {skinTypesList.map((st, idx) => (
+                                                        <span key={idx} className="bg-emerald-50/90 border border-emerald-200 text-emerald-950 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                                                            {st}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
-                                {/* Kullanım Zamanı */}
-                                {product.usageTime && (
-                                    <div className="space-y-1">
-                                        <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                            <Clock className="w-3 h-3 text-gold-500" /> Kullanım Zamanı
-                                        </span>
-                                        <div className="pt-0.5">
-                                            <span className="inline-block bg-charcoal-900 text-gold-400 font-mono text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider rounded-xs">
-                                                {product.usageTime}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Cilt Sorunları / Hedefler */}
-                                {product.concerns && product.concerns.length > 0 && (
-                                    <div className="space-y-1 sm:col-span-2">
-                                        <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                            <Target className="w-3 h-3 text-gold-500" /> Hedeflenen Cilt Sorunları
-                                        </span>
-                                        <div className="flex flex-wrap gap-1.5 pt-0.5">
-                                            {product.concerns.map((concern, idx) => (
-                                                <span key={idx} className="bg-amber-50/90 border border-amber-200 text-amber-950 text-[10px] px-2.5 py-0.5 rounded-xs font-medium">
-                                                    ✓ {concern}
+                                        {/* Kullanım Zamanı */}
+                                        {product.usageTime && (
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
+                                                    <Clock className="w-3 h-3 text-gold-500" /> Kullanım Zamanı
                                                 </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                                <div className="pt-0.5">
+                                                    <span className="inline-block bg-charcoal-900 text-gold-400 font-mono text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider rounded-xs">
+                                                        {product.usageTime}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
 
-                            </div>
-                        </div>
+                                        {/* Cilt Sorunları / Hedefler */}
+                                        {concernsList.length > 0 && (
+                                            <div className="space-y-1 sm:col-span-2">
+                                                <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
+                                                    <Target className="w-3 h-3 text-gold-500" /> Hedeflenen Cilt Sorunları
+                                                </span>
+                                                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                                    {concernsList.map((concern, idx) => (
+                                                        <span key={idx} className="bg-amber-50/90 border border-amber-200 text-amber-950 text-[10px] px-2.5 py-0.5 rounded-xs font-medium">
+                                                            ✓ {concern}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                    </div>
+                                </div>
+                            );
+                        })()}
 
                         {/* Sepete Ekle Butonu */}
                         <button

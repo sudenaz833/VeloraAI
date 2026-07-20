@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ShopAPI.DTOs
 {
     public class ProductReadDto
@@ -16,9 +14,9 @@ namespace ShopAPI.DTOs
         public double AverageRating { get; set; }
         public int CommentCount { get; set; }
 
-        public List<string>? ActiveIngredients { get; set; } = new List<string>();
-        public List<string>? SkinTypes { get; set; } = new List<string>();
-        public List<string>? Concerns { get; set; } = new List<string>();
+        public string? ActiveIngredients { get; set; }
+        public string? SkinTypes { get; set; }
+        public string? Concerns { get; set; }
         public string? UsageTime { get; set; }
     }
 }

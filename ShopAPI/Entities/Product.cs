@@ -32,13 +32,13 @@ namespace ShopAPI.Entities
         public DateTime? DiscountExpiresAt { get; set; }
         
         [Column("activeIngredients")]
-         public List<string>? ActiveIngredients { get; set; } = new List<string>();
-         
+        public string? ActiveIngredients { get; set; }
+
         [Column("skinTypes")]
-        public List<string>? SkinTypes { get; set; } = new List<string>();
+        public string? SkinTypes { get; set; }
 
         [Column("concerns")]
-        public List<string>? Concerns { get; set; } = new List<string>();
+        public string? Concerns { get; set; }
 
         [Column("usageTime")]
         public string? UsageTime {get; set;}
