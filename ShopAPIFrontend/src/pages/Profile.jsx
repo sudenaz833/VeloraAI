@@ -219,6 +219,34 @@ function Profile() {
                 </span>
               </div>
 
+              {/* Bilgileri Düzenle Butonu */}
+              <button
+                onClick={handleOpenEditModal}
+                className="w-full bg-charcoal-900 text-white text-xs tracking-widest uppercase font-medium py-3 px-4 hover:bg-charcoal-800 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <Edit className="w-3.5 h-3.5 text-gold-400" />
+                <span>Bilgileri Düzenle</span>
+              </button>
+
+              <div className="w-full pt-6 border-t border-charcoal-50 flex justify-around text-center">
+                <div>
+                  <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Siparişler</p>
+                  <p className="text-sm font-semibold text-charcoal-800 mt-1 flex items-center gap-1 justify-center">
+                    <Clock className="w-3.5 h-3.5 text-gold-500" /> {orders.length}
+                  </p>
+                </div>
+                <div className="w-[1px] bg-charcoal-100" />
+                <div>
+                  <Link to="/cart">
+                    <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Sepetim</p>
+                    <p className="text-sm font-semibold text-charcoal-800 mt-1 flex items-center gap-1 justify-center">
+                      <ShoppingBag className="w-3.5 h-3.5 text-gold-500" /> {basketCount}
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             {/* Sağ Kart - Detaylı Bilgiler */}
             <div className="md:col-span-2 bg-white p-8 md:p-10 border border-charcoal-100 space-y-8">
 
