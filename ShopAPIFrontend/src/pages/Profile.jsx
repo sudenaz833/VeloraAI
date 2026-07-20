@@ -37,7 +37,6 @@ function Profile() {
     email: '',
     phone: '',
     address: '',
-    password: ''
   });
 
   useEffect(() => {
@@ -62,7 +61,6 @@ function Profile() {
           email: response.data.email || '',
           phone: response.data.phone || '',
           address: response.data.address || '',
-          password: ''
         });
 
         // Sipariş Geçmişi
@@ -117,7 +115,6 @@ function Profile() {
         email: profile.email || '',
         phone: profile.phone || '',
         address: profile.address || '',
-        password: ''
       });
     }
     setIsEditModalOpen(true);
@@ -135,10 +132,6 @@ function Profile() {
         phone: formData.phone,
         address: formData.address,
       };
-
-      if (formData.password && formData.password.trim() !== '') {
-        updatePayload.password = formData.password;
-      }
 
       const response = await api.put('customers', updatePayload);
       setProfile(response.data);
@@ -457,20 +450,6 @@ function Profile() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light resize-none"
-                />
-              </div>
-
-              {/* Şifre Güncelleme (İsteğe Bağlı) */}
-              <div className="space-y-1 pt-2 border-t border-charcoal-100">
-                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
-                  <Lock className="w-3 h-3" /> Yeni Şifre (İsteğe Bağlı)
-                </label>
-                <input
-                  type="password"
-                  placeholder="Değiştirmek istemiyorsanız boş bırakın"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
                 />
               </div>
 
