@@ -6,13 +6,14 @@ import {
     ArrowLeft,
     Star,
     ShoppingBag,
-    Loader2, MessageSquare,
+    Loader2,
+    MessageSquare,
     User,
-    Calendar,
     Send,
     Trash2,
-    Edit // Edit ikonu eklendi
+    Edit
 } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -44,21 +45,20 @@ function ProductDetail() {
                 setError(null);
                 const productRes = await api.get(`products/${id}`);
                 setProduct(productRes.data);
-                const commentRes = await api.get(`comments/product/${id}`)
+                const commentRes = await api.get(`comments/product/${id}`);
                 setComments(commentRes.data);
                 const profileRes = await api.get('customers/my-profile');
                 setProfile(profileRes.data);
-            }
-
-            catch (err) {
+            } catch (err) {
                 console.error("Detay sayfası yükleme hatası:", err);
-                setError("ürün detayları veya yorumlar yüklenirken hata oluştu. Lütfen daha sonra tekrar deneyin.");
+                setError("Ürün detayları veya yorumlar yüklenirken hata oluştu. Lütfen daha sonra tekrar deneyin.");
             } finally {
                 setLoading(false);
             }
         };
         fetchProductDeatilAndComments();
     }, [id, navigate]);
+
     const handleAddToBasket = async () => {
         try {
             setAddingToBasket(true);
@@ -71,6 +71,7 @@ function ProductDetail() {
             setAddingToBasket(false);
         }
     };
+
     const updateProductRatingLocally = (updatedComments) => {
         const count = updatedComments.length;
         const sum = updatedComments.reduce((acc, c) => acc + (parseFloat(c.rating) || 0), 0);
@@ -79,7 +80,7 @@ function ProductDetail() {
     };
 
     const handleCommentSubmit = async (e) => {
-        e.preventDefault();//submit var
+        e.preventDefault();
         if (!commentText) {
             toast.warning("Yorum alanı boş bırakılamaz.");
             return;
@@ -101,7 +102,6 @@ function ProductDetail() {
             
             setCommentText("");
             setRating(5);
-
         } catch (err) {
             console.error("Yorum gönderme hatası", err);
             toast.error("Yorum eklenirken bir hata oluştu");
@@ -109,6 +109,7 @@ function ProductDetail() {
             setSubmittingComment(false);
         }
     };
+
     const handleDeleteComment = async (commentId) => {
         const confirmDelete = window.confirm("Bu yorumu silmek istediğinizden emin misiniz?");
         if (!confirmDelete) return;
@@ -128,7 +129,6 @@ function ProductDetail() {
             setLoading(false);
         }
     };
-
 
     const startEditing = (comment) => {
         setEditingCommentId(comment.commentId);
@@ -166,6 +166,7 @@ function ProductDetail() {
             setLoading(false);
         }
     };
+
     const renderStars = (ratingStr) => {
         const ratingVal = parseInt(ratingStr) || 5;
         return (
@@ -176,8 +177,8 @@ function ProductDetail() {
                 ))}
             </div>
         );
-
     };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
@@ -188,6 +189,7 @@ function ProductDetail() {
             </div>
         );
     }
+
     if (error || !product) {
         return (
             <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-6">
@@ -200,25 +202,25 @@ function ProductDetail() {
             </div>
         );
     }
+
     return (
-        <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900">
-            {/* Navbar */}
-            <header className="bg-white border-b border-charcoal-100 sticky top-0 z-50">
-                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <Link to="/products" className="flex items-center gap-2 text-xs tracking-widest text-charcoal-500 hover:text-gold-600 uppercase transition-colors duration-300">
+        <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
+
+            {/* Reusable Responsive Navbar */}
+            <Navbar />
+
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 space-y-10 sm:space-y-16 flex-1 w-full">
+
+                {/* Geri Dön Linki */}
+                <div>
+                    <Link to="/products" className="inline-flex items-center gap-2 text-xs tracking-widest text-charcoal-500 hover:text-gold-600 uppercase transition-colors">
                         <ArrowLeft className="w-4 h-4" />
-                        <span>Ürünlere Dön</span>
+                        <span>Tüm Ürünlere Dön</span>
                     </Link>
-                    <h2 className="font-serif text-xl tracking-[0.25em] font-light uppercase text-charcoal-900">
-                        VELORA
-                    </h2>
-                    <div className="w-24"></div> {/* Simetriyi korumak için boş alan */}
                 </div>
-            </header>
-            <main className="max-w-6xl mx-auto px-6 py-12 md:py-16 space-y-16">
 
                 {/* Ürün Detay Bölümü (Split Screen) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start bg-white border border-charcoal-100 p-8 md:p-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start bg-white border border-charcoal-100 p-5 sm:p-8 md:p-12 shadow-sm">
 
                     {/* Sol - Ürün Görseli */}
                     <div className="aspect-square w-full overflow-hidden bg-charcoal-50 border border-charcoal-100">
@@ -228,13 +230,14 @@ function ProductDetail() {
                             className="w-full h-full object-cover transition-transform duration-[6000ms] hover:scale-105"
                         />
                     </div>
+
                     {/* Sağ - Ürün Bilgileri */}
-                    <div className="space-y-6">
+                    <div className="space-y-5 sm:space-y-6">
                         <div className="space-y-2">
                             <span className="text-[10px] tracking-[0.25em] text-gold-600 uppercase font-semibold block">
                                 {product.category || "Velora Seçkisi"}
                             </span>
-                            <h1 className="font-serif text-3xl text-charcoal-900 tracking-wide font-light">
+                            <h1 className="font-serif text-2xl sm:text-3xl text-charcoal-900 tracking-wide font-light">
                                 {product.productName}
                             </h1>
                             
@@ -259,31 +262,34 @@ function ProductDetail() {
                             
                             <div className="w-12 h-[1px] bg-gold-400 mt-3" />
                         </div>
+
                         {/* Fiyat ve Stok */}
                         <div className="flex justify-between items-baseline py-4 border-y border-charcoal-50">
                             <div>
                                 <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">Fiyat</span>
-                                <span className="text-gold-600 text-2xl font-semibold">{product.price} TL</span>
+                                <span className="text-gold-600 text-xl sm:text-2xl font-semibold">{product.price} TL</span>
                             </div>
                             <div className="text-right">
                                 <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">Stok Durumu</span>
-                                <span className={`text-sm font-medium ${product.stock > 5 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                <span className={`text-xs sm:text-sm font-medium ${product.stock > 5 ? 'text-emerald-600' : 'text-amber-600'}`}>
                                     {product.stock > 0 ? `${product.stock} Adet Mevcut` : 'Tükendi'}
                                 </span>
                             </div>
                         </div>
+
                         {/* Ürün Açıklaması */}
                         <div className="space-y-2">
                             <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-semibold block">Ürün Açıklaması</span>
-                            <p className="text-charcoal-600 text-sm leading-relaxed font-light">
+                            <p className="text-charcoal-600 text-xs sm:text-sm leading-relaxed font-light">
                                 {product.description || "Velora serisinin bu eşsiz ürünü, cildinizin doğal ışıltısını ortaya çıkarmak ve derinlemesine bakım sağlamak için özel bileşenlerle formüle edilmiştir."}
                             </p>
                         </div>
+
                         {/* Sepete Ekle Butonu */}
                         <button
                             disabled={product.stock <= 0 || addingToBasket}
                             onClick={handleAddToBasket}
-                            className="w-full bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-[0.2em] font-medium uppercase py-4 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed"
+                            className="w-full bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-[0.2em] font-medium uppercase py-4 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed shadow-md"
                         >
                             {addingToBasket ? (
                                 <>
@@ -299,14 +305,15 @@ function ProductDetail() {
                         </button>
                     </div>
                 </div>
+
                 {/* Yorumlar ve Değerlendirmeler Bölümü */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 items-start">
 
                     {/* Sol - Yorumları Listeleme (2 Kolon) */}
-                    <div className="md:col-span-2 space-y-6 bg-white border border-charcoal-100 p-8">
+                    <div className="lg:col-span-2 space-y-6 bg-white border border-charcoal-100 p-5 sm:p-8 shadow-sm">
                         <div className="flex items-center gap-2 pb-4 border-b border-charcoal-50">
                             <MessageSquare className="w-5 h-5 text-gold-500" />
-                            <h3 className="font-serif text-xl text-charcoal-900 tracking-wide font-light">
+                            <h3 className="font-serif text-lg sm:text-xl text-charcoal-900 tracking-wide font-light">
                                 Yorumlar & Değerlendirmeler ({comments.length})
                             </h3>
                         </div>
@@ -318,7 +325,7 @@ function ProductDetail() {
                             <div className="space-y-6 divide-y divide-charcoal-50">
                                 {comments.map((comment, index) => (
                                     <div key={index} className={`pt-6 ${index === 0 ? 'pt-0' : ''} space-y-3`}>
-                                        <div className="flex justify-between items-center">
+                                        <div className="flex flex-wrap justify-between items-center gap-2">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-8 h-8 rounded-full bg-gold-50 border border-gold-200 flex items-center justify-center text-gold-600 text-xs font-semibold">
                                                     <User className="w-3.5 h-3.5" />
@@ -338,7 +345,6 @@ function ProductDetail() {
                                                 {/* Düzenleme ve Silme Butonları */}
                                                 {(profile?.customerId === comment.customerId || profile?.role === 'Admin') && (
                                                     <div className="flex items-center gap-1">
-                                                        {/* Sadece kendi yorumunu düzenleyebilir (Admin başkasının yorumunu sadece silebilir, düzenleyemez) */}
                                                         {profile?.customerId === comment.customerId && (
                                                             <button 
                                                                 onClick={() => startEditing(comment)}
@@ -400,7 +406,7 @@ function ProductDetail() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <p className="text-charcoal-600 text-sm font-light leading-relaxed">
+                                            <p className="text-charcoal-600 text-xs sm:text-sm font-light leading-relaxed">
                                                 {comment.text}
                                             </p>
                                         )}
@@ -409,8 +415,9 @@ function ProductDetail() {
                             </div>
                         )}
                     </div>
+
                     {/* Sağ - Yorum Formu (1 Kolon) */}
-                    <div className="bg-white border border-charcoal-100 p-8 space-y-6 sticky top-24">
+                    <div className="bg-white border border-charcoal-100 p-5 sm:p-8 space-y-6 lg:sticky lg:top-28 shadow-sm">
                         <div>
                             <h3 className="font-serif text-lg text-charcoal-900 tracking-wide font-light">Deneyiminizi Paylaşın</h3>
                             <p className="text-charcoal-400 text-xs mt-1">Ürün hakkındaki değerlendirmeniz bizim için değerlidir.</p>
@@ -436,6 +443,7 @@ function ProductDetail() {
                                     ))}
                                 </div>
                             </div>
+
                             {/* Yorum Metni */}
                             <div className="space-y-2">
                                 <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Yorumunuz</label>
@@ -448,17 +456,19 @@ function ProductDetail() {
                                     required
                                 />
                             </div>
+
                             {/* Gönderen Kişi Bilgisi */}
                             {profile && (
                                 <div className="text-[10px] text-charcoal-400 tracking-wide font-light italic">
                                     <strong>{profile.firstName} {profile.lastName}</strong> olarak yorum yapıyorsunuz.
                                 </div>
                             )}
+
                             {/* Gönder Butonu */}
                             <button
                                 type="submit"
                                 disabled={submittingComment}
-                                className="w-full bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-[0.2em] font-medium uppercase py-3.5 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed"
+                                className="w-full bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-[0.2em] font-medium uppercase py-3.5 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed shadow-md"
                             >
                                 {submittingComment ? (
                                     <>
@@ -474,14 +484,11 @@ function ProductDetail() {
                             </button>
                         </form>
                     </div>
+
                 </div>
             </main>
         </div>
     );
 }
+
 export default ProductDetail;
-
-
-
-
-

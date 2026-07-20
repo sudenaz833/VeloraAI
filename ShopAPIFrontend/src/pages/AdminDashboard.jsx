@@ -228,8 +228,8 @@ function AdminDashboard() {
     <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased flex flex-col lg:flex-row">
 
       {/* SOL MENÜ / SIDEBAR */}
-      <aside className="w-full lg:w-72 bg-charcoal-950 text-white shrink-0 flex flex-col justify-between p-6 border-r border-charcoal-900">
-        <div className="space-y-8">
+      <aside className="w-full lg:w-72 bg-charcoal-950 text-white shrink-0 flex flex-col justify-between p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-charcoal-900">
+        <div className="space-y-6 lg:space-y-8">
 
           {/* Logo ve Admin Etiketi */}
           <div className="space-y-2.5">
@@ -244,10 +244,10 @@ function AdminDashboard() {
             </div>
           </div>
 
-          <div className="h-[1px] bg-charcoal-800" />
+          <div className="h-[1px] bg-charcoal-800 hidden lg:block" />
 
           {/* Menü Sekmeleri */}
-          <nav className="space-y-2">
+          <nav className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2">
             <button
               onClick={() => setActiveTab('products')}
               className={`w-full flex items-center justify-between p-3.5 text-xs tracking-wider uppercase font-medium transition-all duration-300 ${activeTab === 'products'

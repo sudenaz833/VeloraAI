@@ -8,7 +8,6 @@ import {
   MapPin,
   Shield,
   LogOut,
-  ArrowLeft,
   Loader2,
   Sparkles,
   ShoppingBag,
@@ -19,6 +18,7 @@ import {
   Lock
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import Navbar from '../components/Navbar';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -37,6 +37,7 @@ function Profile() {
     email: '',
     phone: '',
     address: '',
+    password: ''
   });
 
   useEffect(() => {
@@ -61,6 +62,7 @@ function Profile() {
           email: response.data.email || '',
           phone: response.data.phone || '',
           address: response.data.address || '',
+          password: ''
         });
 
         // Sipariş Geçmişi
@@ -115,6 +117,7 @@ function Profile() {
         email: profile.email || '',
         phone: profile.phone || '',
         address: profile.address || '',
+        password: ''
       });
     }
     setIsEditModalOpen(true);
@@ -132,6 +135,10 @@ function Profile() {
         phone: formData.phone,
         address: formData.address,
       };
+
+      if (formData.password && formData.password.trim() !== '') {
+        updatePayload.password = formData.password;
+      }
 
       const response = await api.put('customers', updatePayload);
       setProfile(response.data);
@@ -163,30 +170,13 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900">
+    <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
 
-      {/* Üst Menü / Navbar */}
-      <header className="bg-white border-b border-charcoal-100">
-        <div className="max-w-4xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/home" className="flex items-center gap-2 text-xs tracking-widest text-charcoal-500 hover:text-gold-600 uppercase transition-colors duration-300">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Ana Sayfaya Dön</span>
-          </Link>
-          <h2 className="font-serif text-xl tracking-[0.25em] font-light uppercase text-charcoal-900">
-            VELORA
-          </h2>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-xs tracking-widest text-red-600 hover:text-red-700 uppercase transition-colors duration-300 font-medium cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Çıkış Yap</span>
-          </button>
-        </div>
-      </header>
+      {/* Reusable Mobile Responsive Navbar */}
+      <Navbar cartItemsCount={basketCount} />
 
       {/* Profil Paneli Gövdesi */}
-      <main className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 flex-1 w-full">
 
         {error ? (
           <div className="bg-red-50 border border-red-200 text-red-700 p-6 text-center space-y-4 max-w-md mx-auto">
@@ -199,10 +189,10 @@ function Profile() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-start">
 
             {/* Sol Kart - Özet Profil Bilgisi & Düzenle Butonu */}
-            <div className="bg-white p-8 border border-charcoal-100 flex flex-col items-center text-center space-y-6">
+            <div className="bg-white p-6 sm:p-8 border border-charcoal-100 flex flex-col items-center text-center space-y-5 shadow-sm">
               <div className="w-20 h-20 bg-gold-50 border border-gold-200 rounded-full flex items-center justify-center text-gold-600 relative">
                 <User className="w-10 h-10" />
                 <div className="absolute bottom-0 right-0 w-6 h-6 bg-gold-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -228,7 +218,16 @@ function Profile() {
                 <span>Bilgileri Düzenle</span>
               </button>
 
-              <div className="w-full pt-6 border-t border-charcoal-50 flex justify-around text-center">
+              {/* Çıkış Yap Butonu */}
+              <button
+                onClick={handleLogout}
+                className="w-full bg-red-50 text-red-600 border border-red-200 text-xs tracking-widest uppercase font-medium py-2.5 px-4 hover:bg-red-100 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Çıkış Yap</span>
+              </button>
+
+              <div className="w-full pt-5 border-t border-charcoal-50 flex justify-around text-center">
                 <div>
                   <p className="text-[10px] tracking-wider text-charcoal-400 uppercase">Siparişler</p>
                   <p className="text-sm font-semibold text-charcoal-800 mt-1 flex items-center gap-1 justify-center">
@@ -248,11 +247,11 @@ function Profile() {
             </div>
 
             {/* Sağ Kart - Detaylı Bilgiler */}
-            <div className="md:col-span-2 bg-white p-8 md:p-10 border border-charcoal-100 space-y-8">
+            <div className="md:col-span-2 bg-white p-6 sm:p-8 md:p-10 border border-charcoal-100 space-y-6 sm:space-y-8 shadow-sm">
 
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-serif text-xl text-charcoal-900 tracking-wide font-light">Hesap Detayları</h4>
+                  <h4 className="font-serif text-lg sm:text-xl text-charcoal-900 tracking-wide font-light">Hesap Detayları</h4>
                   <p className="text-charcoal-400 text-xs mt-1">Velora premium cilt bakım üyelik kartınızdaki kişisel detaylar.</p>
                   <div className="w-12 h-[1px] bg-gold-400 mt-3" />
                 </div>
@@ -264,12 +263,12 @@ function Profile() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 
                 {/* İsim */}
                 <div className="space-y-1">
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Adı</span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100">
                     {profile?.firstName || 'Belirtilmemiş'}
                   </div>
                 </div>
@@ -277,7 +276,7 @@ function Profile() {
                 {/* Soyisim */}
                 <div className="space-y-1">
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Soyadı</span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100">
                     {profile?.lastName || 'Belirtilmemiş'}
                   </div>
                 </div>
@@ -287,7 +286,7 @@ function Profile() {
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
                     <Mail className="w-3.5 h-3.5" /> E-posta Adresi
                   </span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100 break-all">
                     {profile?.email || 'Belirtilmemiş'}
                   </div>
                 </div>
@@ -297,7 +296,7 @@ function Profile() {
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
                     <Phone className="w-3.5 h-3.5" /> Telefon Numarası
                   </span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100">
                     {profile?.phone || 'Belirtilmemiş'}
                   </div>
                 </div>
@@ -307,7 +306,7 @@ function Profile() {
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5" /> Teslimat Adresi
                   </span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100 whitespace-pre-wrap">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100 whitespace-pre-wrap">
                     {profile?.address || 'Belirtilmemiş (Henüz adres eklenmedi)'}
                   </div>
                 </div>
@@ -317,7 +316,7 @@ function Profile() {
                   <span className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
                     <Shield className="w-3.5 h-3.5" /> Üyelik Tipi
                   </span>
-                  <div className="bg-charcoal-50 p-3 text-sm text-charcoal-800 font-light border border-charcoal-100 uppercase tracking-widest">
+                  <div className="bg-charcoal-50 p-3 text-xs sm:text-sm text-charcoal-800 font-light border border-charcoal-100 uppercase tracking-widest">
                     {profile?.role || 'Üye'}
                   </div>
                 </div>
@@ -325,9 +324,9 @@ function Profile() {
               </div>
 
               {/* Sipariş Geçmişi Bölümü */}
-              <div className="pt-8 border-t border-charcoal-100 space-y-4">
+              <div className="pt-6 sm:pt-8 border-t border-charcoal-100 space-y-4">
                 <div>
-                  <h4 className="font-serif text-lg text-charcoal-900 tracking-wide font-light">Sipariş Geçmişim</h4>
+                  <h4 className="font-serif text-base sm:text-lg text-charcoal-900 tracking-wide font-light">Sipariş Geçmişim</h4>
                   <p className="text-charcoal-400 text-[11px] mt-1">Daha önce vermiş olduğunuz siparişlerin güncel durumları.</p>
                 </div>
 
@@ -338,7 +337,7 @@ function Profile() {
                 ) : (
                   <div className="space-y-3">
                     {orders.map((order) => (
-                      <div key={order.orderId} className="bg-charcoal-50 border border-charcoal-100 p-4 flex justify-between items-center text-xs">
+                      <div key={order.orderId} className="bg-charcoal-50 border border-charcoal-100 p-3.5 sm:p-4 flex flex-wrap justify-between items-center gap-2 text-xs">
                         <div className="space-y-1">
                           <span className="font-semibold text-charcoal-900 block">Sipariş #VEL-{order.orderId}</span>
                           <span className="text-charcoal-400 block">{new Date(order.createdAt).toLocaleDateString('tr-TR')}</span>
@@ -357,7 +356,7 @@ function Profile() {
               </div>
 
               {/* Lüks Kozmetik Marka Sloganı */}
-              <div className="bg-gold-50/50 border border-gold-200/50 p-4.5 text-xs text-gold-900 leading-relaxed font-light">
+              <div className="bg-gold-50/50 border border-gold-200/50 p-4 text-xs text-gold-900 leading-relaxed font-light">
                 <p className="font-serif italic text-gold-800 text-sm mb-1">Cildinize Özel Seçkin Deneyim</p>
                 Velora üyesi olarak, cilt tipinize özel hazırlanan ürün lansmanlarına, kişisel indirim kuponlarına ve özel bakım davetiyelerine öncelikli erişim hakkınız bulunmaktadır.
               </div>
@@ -372,12 +371,12 @@ function Profile() {
       {/* Profil Güncelleme Modalı */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal-950/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white border border-charcoal-100 max-w-lg w-full p-6 md:p-8 space-y-6 relative shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="bg-white border border-charcoal-100 max-w-lg w-full p-6 md:p-8 space-y-6 relative shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
             
             {/* Modal Başlığı & Kapatma Butonu */}
             <div className="flex justify-between items-center border-b border-charcoal-100 pb-4">
               <div>
-                <h3 className="font-serif text-xl text-charcoal-900 font-light tracking-wide">Profil Bilgilerini Güncelle</h3>
+                <h3 className="font-serif text-lg sm:text-xl text-charcoal-900 font-light tracking-wide">Profil Bilgilerini Güncelle</h3>
                 <p className="text-xs text-charcoal-400 mt-0.5">Kişisel bilgilerinizi ve teslimat adresinizi düzenleyebilirsiniz.</p>
               </div>
               <button
@@ -450,6 +449,20 @@ function Profile() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light resize-none"
+                />
+              </div>
+
+              {/* Şifre Güncelleme (İsteğe Bağlı) */}
+              <div className="space-y-1 pt-2 border-t border-charcoal-100">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Yeni Şifre (İsteğe Bağlı)
+                </label>
+                <input
+                  type="password"
+                  placeholder="Değiştirmek istemiyorsanız boş bırakın"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-2.5 outline-none text-sm transition-all duration-300 font-light"
                 />
               </div>
 

@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import { toast } from 'react-toastify';
 import {
-  Phone,
-  Mail,
-  MapPin,
-  User,
-  ShoppingBag,
   Loader2,
   Sparkles,
-  Star
+  Star,
+  ShoppingBag
 } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const CountdownTimer = ({ expiryDate }) => {
   const calculateTimeLeft = () => {
@@ -119,80 +116,18 @@ function Product() {
   const filteredProducts = products.filter((product) => product.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900">
+    <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
 
-      {/* 1. TOP BAR (Üst Bilgi Bandı) */}
-      <div className="bg-charcoal-900 text-charcoal-300 py-2.5 px-4 text-xs tracking-[0.2em] uppercase font-light">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <Phone className="w-3.5 h-3.5 text-gold-400" />
-            <span>0212 345 67 89</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Mail className="w-3.5 h-3.5 text-gold-400" />
-            <span>info@velora.com</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-gold-400" />
-            <span>Antalya, Türkiye</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. NAVBAR (Menü Çubuğu) */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-charcoal-100 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-
-          {/* Logo */}
-          <Link to="/home" className="group">
-            <h2 className="font-serif text-3xl tracking-[0.25em] font-light uppercase text-charcoal-900 group-hover:text-gold-600 transition-colors duration-300">
-              VELORA
-            </h2>
-          </Link>
-
-          {/* Navigation */}
-          <nav className="flex items-center gap-12">
-            <Link to="/home" className="text-xs tracking-widest uppercase font-medium text-charcoal-400 hover:text-gold-500 transition-colors duration-300 relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold-500 hover:after:w-full after:transition-all after:duration-300">
-              Anasayfa
-            </Link>
-            <Link to="/about" className="text-xs tracking-widest uppercase font-medium text-charcoal-400 hover:text-gold-500 transition-colors duration-300 relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold-500 hover:after:w-full after:transition-all after:duration-300">
-              Hakkımızda
-            </Link>
-            <Link to="/products" className="text-xs tracking-widest uppercase font-medium text-charcoal-900 hover:text-gold-500 transition-colors duration-300 relative py-1 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gold-500 after:transform after:scale-x-100 transition-all">
-              Ürünler
-            </Link>
-            <Link to="/home#values" className="text-xs tracking-widest uppercase font-medium text-charcoal-400 hover:text-gold-500 transition-colors duration-300 relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold-500 hover:after:w-full after:transition-all after:duration-300">
-              Değerlerimiz
-            </Link>
-          </nav>
-
-          {/* Action Icons */}
-          <div className="flex items-center gap-6">
-            {role === 'Admin' && (
-              <Link to="/admin" className="text-xs tracking-widest text-gold-600 hover:text-gold-500 font-semibold uppercase transition-colors" title="Admin Paneli">
-                Yönetici Paneli
-              </Link>
-            )}
-            <Link to="/profile" className="text-charcoal-500 hover:text-gold-500 transition-colors duration-300 p-1.5" title="Profilim">
-              <User className="w-5 h-5" />
-            </Link>
-            {role !== 'Admin' && (
-              <Link to="/cart" className="text-charcoal-500 hover:text-gold-500 transition-colors duration-300 p-1.5 relative" title="Sepetim">
-                <ShoppingBag className="w-5 h-5" />
-              </Link>
-            )}
-          </div>
-
-        </div>
-      </header>
+      {/* Reusable Mobile Responsive Navbar */}
+      <Navbar />
 
       {/* Ana Gövde Yapısı */}
-      <main className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 flex-1 w-full">
 
         {/* Sayfa Başlığı */}
-        <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
+        <div className="text-center max-w-xl mx-auto space-y-2 sm:space-y-3 mb-8 sm:mb-12">
           <span className="text-[10px] tracking-[0.25em] text-gold-600 uppercase font-semibold block">Velora Koleksiyonu</span>
-          <h1 className="font-serif text-3xl md:text-4xl text-charcoal-900 tracking-wide font-light">Seçkin Ürünlerimiz</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-charcoal-900 tracking-wide font-light">Seçkin Ürünlerimiz</h1>
           <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-2" />
         </div>
 
@@ -206,47 +141,49 @@ function Product() {
             <p className="text-sm font-medium">{error}</p>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-12 items-start">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-start">
 
-            {/* Sol Filtre / Kategori Menüsü */}
-            <aside className="w-full lg:w-64 shrink-0 bg-white border border-charcoal-100 p-6 space-y-6">
+            {/* Sol Filtre / Kategori Menüsü (Mobilde Yatay Kaydırılabilir) */}
+            <aside className="w-full lg:w-64 shrink-0 bg-white border border-charcoal-100 p-4 sm:p-6 space-y-4 lg:space-y-6">
               <div>
                 <h3 className="font-serif text-base text-charcoal-900 tracking-wide font-medium">Kategoriler</h3>
-                <div className="w-8 h-[1px] bg-gold-400 mt-2" />
+                <div className="w-8 h-[1px] bg-gold-400 mt-1.5" />
               </div>
-              <ul className="flex flex-row lg:flex-col flex-wrap gap-2 lg:gap-3 text-xs tracking-wider uppercase">
+              <ul className="flex flex-row lg:flex-col overflow-x-auto gap-2 lg:gap-3 text-xs tracking-wider uppercase pb-2 lg:pb-0 no-scrollbar">
                 {['Cilt Bakımı', 'Makyaj', 'Parfüm', 'Setler'].map((category) => (
-                  <li key={category} className="w-full">
+                  <li key={category} className="shrink-0 lg:w-full">
                     <button
                       onClick={() => setActiveCategory(category)}
-                      className={`w-full text-left py-2.5 px-4 font-medium transition-all duration-300 flex items-center justify-between border ${activeCategory === category
-                        ? 'bg-charcoal-900 text-white border-charcoal-900'
-                        : 'bg-transparent text-charcoal-500 border-charcoal-100 hover:border-gold-300 hover:text-gold-600'
-                        }`}
+                      className={`whitespace-nowrap lg:whitespace-normal w-full text-left py-2 sm:py-2.5 px-3.5 sm:px-4 font-medium transition-all duration-300 flex items-center justify-between gap-3 border ${
+                        activeCategory === category
+                          ? 'bg-charcoal-900 text-white border-charcoal-900 shadow-sm'
+                          : 'bg-transparent text-charcoal-500 border-charcoal-100 hover:border-gold-300 hover:text-gold-600'
+                      }`}
                     >
                       <span>{category}</span>
-                      {activeCategory === category && <Sparkles className="w-3.5 h-3.5 text-gold-400" />}
+                      {activeCategory === category && <Sparkles className="w-3.5 h-3.5 text-gold-400 shrink-0" />}
                     </button>
                   </li>
                 ))}
               </ul>
             </aside>
+
             {/* Sağ Ürün Izgarası (Grid) */}
             <div className="flex-1 w-full">
               {filteredProducts.length === 0 ? (
-                <div className="text-center py-20 bg-white border border-charcoal-100">
+                <div className="text-center py-16 sm:py-20 bg-white border border-charcoal-100 p-6">
                   <p className="text-sm text-charcoal-400 font-light">Bu kategoriye henüz ürün eklenmemiş.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.productId}
-                      className="bg-white border border-charcoal-100 p-5 flex flex-col justify-between hover:shadow-lg hover:border-gold-300/50 transition-all duration-300 group"
+                      className="bg-white border border-charcoal-100 p-4 sm:p-5 flex flex-col justify-between hover:shadow-lg hover:border-gold-300/50 transition-all duration-300 group"
                     >
                       {/* Ürün Görseli */}
-                      <div className="aspect-square w-full overflow-hidden bg-charcoal-50 relative mb-5">
-                        <Link to={`/product/${product.productId}`} className="hover:text-gold-500 transition-colors">
+                      <div className="aspect-square w-full overflow-hidden bg-charcoal-50 relative mb-4 sm:mb-5">
+                        <Link to={`/product/${product.productId}`} className="hover:text-gold-500 transition-colors block w-full h-full">
                           <img
                             src={product.imageUrl || "/velora_hero_image.png"}
                             alt={product.productName}
@@ -256,8 +193,8 @@ function Product() {
 
                         {/* Sepet Sayısı Rozeti */}
                         {product.isBasketCount > 0 && (
-                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm border border-gold-200/50 shadow-sm px-2.5 py-1 text-[9px] font-bold tracking-widest text-gold-700 uppercase flex items-center gap-1.5 z-10">
-                            <ShoppingBag className="w-3.5 h-3.5 text-gold-600 animate-pulse" />
+                          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white/95 backdrop-blur-sm border border-gold-200/50 shadow-sm px-2 sm:px-2.5 py-1 text-[8px] sm:text-[9px] font-bold tracking-widest text-gold-700 uppercase flex items-center gap-1.5 z-10">
+                            <ShoppingBag className="w-3 h-3 text-gold-600 animate-pulse" />
                             <span>{product.isBasketCount} Kişinin Sepetinde</span>
                           </div>
                         )}
@@ -274,7 +211,7 @@ function Product() {
                       {/* Ürün Bilgisi */}
                       <div className="space-y-2 flex-1 flex flex-col justify-between">
                         <div>
-                          <h3 className="font-serif text-base text-charcoal-900 font-light tracking-wide min-h-[3rem] line-clamp-2">
+                          <h3 className="font-serif text-sm sm:text-base text-charcoal-900 font-light tracking-wide min-h-[2.5rem] sm:min-h-[3rem] line-clamp-2">
                             <Link to={`/product/${product.productId}`} className="hover:text-gold-500 transition-colors">
                               {product.productName}
                             </Link>
@@ -305,13 +242,13 @@ function Product() {
                             {product.discountPrice && product.discountExpiresAt && new Date(product.discountExpiresAt) > new Date() ? (
                               <div className="space-y-1">
                                 <div className="flex items-baseline gap-1.5">
-                                  <span className="text-gold-600 text-base font-semibold">{product.discountPrice} TL</span>
+                                  <span className="text-gold-600 text-sm sm:text-base font-semibold">{product.discountPrice} TL</span>
                                   <span className="text-red-500 text-xs line-through font-medium">{product.price} TL</span>
                                 </div>
                                 <CountdownTimer expiryDate={product.discountExpiresAt} />
                               </div>
                             ) : (
-                              <p className="text-gold-600 text-base font-semibold">{product.price} TL</p>
+                              <p className="text-gold-600 text-sm sm:text-base font-semibold">{product.price} TL</p>
                             )}
                           </div>
                           <div className="text-right self-start">
@@ -325,14 +262,14 @@ function Product() {
 
                       {/* Sepete Ekle Butonu veya Admin Bilgisi */}
                       {role === 'Admin' ? (
-                        <div className="w-full text-center bg-charcoal-50 border border-charcoal-100 py-3.5 mt-5 text-[10px] tracking-widest text-charcoal-400 uppercase font-medium">
+                        <div className="w-full text-center bg-charcoal-50 border border-charcoal-100 py-3 mt-4 text-[10px] tracking-widest text-charcoal-400 uppercase font-medium">
                           Sepet Kısıtlaması (Admin)
                         </div>
                       ) : (
                         <button
                           disabled={product.stock <= 0}
                           onClick={() => handleAddToBasket(product.productId)}
-                          className="w-full bg-charcoal-900 text-white text-xs tracking-[0.2em] font-medium uppercase py-3.5 mt-5 hover:bg-charcoal-800 disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed transition-all duration-300"
+                          className="w-full bg-charcoal-900 text-white text-xs tracking-[0.2em] font-medium uppercase py-3 sm:py-3.5 mt-4 hover:bg-charcoal-800 disabled:bg-charcoal-200 disabled:text-charcoal-400 disabled:cursor-not-allowed transition-all duration-300 cursor-pointer"
                         >
                           Sepete Ekle
                         </button>
@@ -348,9 +285,9 @@ function Product() {
 
       </main>
 
-      {/* 5. FOOTER (Alt Bilgi) */}
-      <footer className="bg-charcoal-950 text-charcoal-300 pt-16 pb-12 border-t border-charcoal-800">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+      {/* FOOTER */}
+      <footer className="bg-charcoal-950 text-charcoal-300 pt-12 sm:pt-16 pb-12 border-t border-charcoal-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-12">
 
           <div className="space-y-4">
             <h3 className="font-serif text-xl tracking-[0.25em] text-white uppercase font-light">VELORA</h3>
@@ -394,7 +331,7 @@ function Product() {
 
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-center">
           <span className="text-[10px] tracking-widest text-charcoal-500 uppercase">
             © 2026 VELORA Cosmetics. Tüm Hakları Saklıdır.
           </span>

@@ -189,7 +189,7 @@ function Login() {
               {/* Üye Olma Durumunda Kişisel Bilgiler (Ad, Soyad, Telefon, Adres) */}
               {activeTab === 'register' && (
                 <div className="space-y-5 animate-fade-in">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-[10px] tracking-widest text-gold-600 uppercase font-medium block">
                         Ad
@@ -218,7 +218,7 @@ function Login() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-[10px] tracking-widest text-gold-600 uppercase font-medium block">
                         Telefon
