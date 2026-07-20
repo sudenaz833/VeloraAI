@@ -31,7 +31,12 @@ namespace ShopAPI.Mappings
         CreateMap<Product, ProductCreateDto>().ReverseMap();
         CreateMap<Product, ProductUpdateDto>().ReverseMap();
 
-        CreateMap<Order, OrderReadDto>().ReverseMap();
+        CreateMap<Order, OrderReadDto>()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductsSummary))
+            .ForMember(dest => dest.ProductsSummary, opt => opt.MapFrom(src => src.ProductsSummary))
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? $"{src.Customer.FirstName} {src.Customer.LastName}" : string.Empty))
+            .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Email : string.Empty))
+            .ReverseMap();
         CreateMap<OrderUpdateDto, Order>().ReverseMap();
         CreateMap<Comment, CommentReadDto>()
             .ForMember(dest => dest.CustomerFirstName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.FirstName : string.Empty))

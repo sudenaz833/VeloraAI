@@ -21,7 +21,9 @@ namespace ShopAPI.Services
         public async Task<IEnumerable<OrderReadDto>> GetOrderByCustomerAsync(int customerId)
         {
             var orders = await _context.Orders
+                .Include(o => o.Customer)
                 .Where(o => o.CustomerId == customerId)
+                .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
         }
@@ -29,6 +31,7 @@ namespace ShopAPI.Services
         public async Task<IEnumerable<OrderReadDto>> GetAllOrdersAsync()
         {
             var orders = await _context.Orders
+                .Include(o => o.Customer)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<OrderReadDto>>(orders);
@@ -36,7 +39,9 @@ namespace ShopAPI.Services
 
         public async Task<OrderReadDto?> GetOrderByIdAsync(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
             return _mapper.Map<OrderReadDto>(order);
         }
 
@@ -64,7 +69,7 @@ namespace ShopAPI.Services
                 CustomerId = customerId,
                 TotalPrice = basketItems.Sum(b => b.Quantity * ((b.Product != null && b.Product.DiscountPrice.HasValue && b.Product.DiscountExpiresAt.HasValue && b.Product.DiscountExpiresAt.Value > DateTime.UtcNow) ? b.Product.DiscountPrice.Value : b.Product?.Price ?? 0)),
                 OrderStatus = "Hazırlanıyor...",
-                ProductsSummary = string.Join(", ", basketItems.Select(b => b.Product?.ProductName ?? "isimsiz ürün")),
+                ProductsSummary = string.Join(", ", basketItems.Select(b => b.Product != null ? $"{b.Product.ProductName} ({b.Quantity} Adet)" : "isimsiz ürün")),
                 CreatedAt = DateTime.UtcNow
             };
 

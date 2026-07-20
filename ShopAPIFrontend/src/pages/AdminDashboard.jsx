@@ -407,7 +407,8 @@ function AdminDashboard() {
                 <thead>
                   <tr className="bg-charcoal-50 text-charcoal-500 uppercase tracking-wider border-b border-charcoal-100">
                     <th className="p-4 font-semibold">Sipariş Kodu</th>
-                    <th className="p-4 font-semibold">Müşteri E-postası</th>
+                    <th className="p-4 font-semibold">Müşteri Bilgisi</th>
+                    <th className="p-4 font-semibold">Sipariş Edilen Ürünler & Miktarları</th>
                     <th className="p-4 font-semibold">Tarih</th>
                     <th className="p-4 font-semibold">Toplam Tutar</th>
                     <th className="p-4 font-semibold">Sipariş Durumu</th>
@@ -415,38 +416,58 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-charcoal-100">
-                  {order.map((item) => (
-                    <tr key={item.orderId} className="hover:bg-charcoal-50/50 transition-colors">
-                      <td className="p-4 font-semibold text-charcoal-900">#VEL-{item.orderId}</td>
-                      <td className="p-4 text-charcoal-600">
-                        {customer.find(c => c.customerId === item.customerId)?.email || `Müşteri #${item.customerId}`}
-                      </td>
-                      <td className="p-4 text-charcoal-400">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</td>
-                      <td className="p-4 text-charcoal-900 font-semibold">{item.totalPrice} TL</td>
-                      <td className="p-4">
-                        {/* Sipariş Durumu Seçici Dropdown */}
-                        <select
-                          value={item.orderStatus || "Hazırlanıyor."}
-                          onChange={(e) => handleUpdateOrderStatus(item.orderId, e.target.value)}
-                          className="bg-[#FAF8F5] border border-charcoal-200 text-charcoal-800 text-[11px] p-1.5 focus:border-gold-500 focus:outline-none"
-                        >
-                          <option value="Hazırlanıyor.">Hazırlanıyor.</option>
-                          <option value="Kargoya Verildi.">Kargoya Verildi.</option>
-                          <option value="Teslim Edildi.">Teslim Edildi.</option>
-                          <option value="İptal Edildi.">İptal Edildi.</option>
-                        </select>
-                      </td>
-                      <td className="p-4 text-center">
-                        <button
-                          onClick={() => handleDeleteOrder(item.orderId)}
-                          className="text-charcoal-400 hover:text-red-600 p-1.5 transition-colors"
-                          title="Siparişi Sil"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {order.map((item) => {
+                    const customerObj = customer.find(c => c.customerId === item.customerId);
+                    const customerEmail = item.customerEmail || customerObj?.email || `Müşteri #${item.customerId}`;
+                    const customerName = item.customerName || (customerObj ? `${customerObj.firstName} ${customerObj.lastName}` : '');
+                    const productSummary = item.productsSummary || item.productName || 'Ürün detayı bulunamadı';
+
+                    return (
+                      <tr key={item.orderId} className="hover:bg-charcoal-50/50 transition-colors">
+                        <td className="p-4 font-semibold text-charcoal-900 whitespace-nowrap">#VEL-{item.orderId}</td>
+                        <td className="p-4 text-charcoal-700 whitespace-nowrap">
+                          {customerName && <span className="font-semibold block text-charcoal-900">{customerName}</span>}
+                          <span className="text-charcoal-500 text-[11px] block">{customerEmail}</span>
+                        </td>
+                        <td className="p-4 text-charcoal-800">
+                          <div className="flex flex-wrap gap-1.5 max-w-md">
+                            {productSummary.split(', ').map((prod, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center bg-gold-50/80 border border-gold-200/60 text-gold-900 text-[11px] font-medium px-2.5 py-1 rounded-sm shadow-2xs"
+                              >
+                                {prod}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-4 text-charcoal-400 whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</td>
+                        <td className="p-4 text-gold-600 font-semibold whitespace-nowrap">{item.totalPrice} TL</td>
+                        <td className="p-4 whitespace-nowrap">
+                          {/* Sipariş Durumu Seçici Dropdown */}
+                          <select
+                            value={item.orderStatus || "Hazırlanıyor."}
+                            onChange={(e) => handleUpdateOrderStatus(item.orderId, e.target.value)}
+                            className="bg-[#FAF8F5] border border-charcoal-200 text-charcoal-800 text-[11px] p-1.5 focus:border-gold-500 focus:outline-none cursor-pointer"
+                          >
+                            <option value="Hazırlanıyor.">Hazırlanıyor.</option>
+                            <option value="Kargoya Verildi.">Kargoya Verildi.</option>
+                            <option value="Teslim Edildi.">Teslim Edildi.</option>
+                            <option value="İptal Edildi.">İptal Edildi.</option>
+                          </select>
+                        </td>
+                        <td className="p-4 text-center whitespace-nowrap">
+                          <button
+                            onClick={() => handleDeleteOrder(item.orderId)}
+                            className="text-charcoal-400 hover:text-red-600 p-1.5 transition-colors cursor-pointer"
+                            title="Siparişi Sil"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
