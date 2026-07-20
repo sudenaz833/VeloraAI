@@ -86,7 +86,7 @@ app.UseSwaggerUI();
 
 app.UseRouting();
 
-app.UseCors("AllowFrontend");
+
 app.UseCors("AllowVercel");
 app.UseAuthentication(); 
 app.UseAuthorization();
