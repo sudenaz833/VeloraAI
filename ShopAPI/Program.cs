@@ -33,10 +33,10 @@ builder.Services.AddScoped<ICommentService,CommentService>();
 
 builder.Services.AddCors(options =>
 {
-options.AddPolicy("AllowFrontend",
+options.AddPolicy("AllowVercel",
 policy =>
 {
-policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "https://shopapi-frontend.vercel.app")
 .AllowAnyHeader()
 .AllowAnyMethod()
 .AllowCredentials();
@@ -87,7 +87,7 @@ app.UseSwaggerUI();
 app.UseRouting();
 
 app.UseCors("AllowFrontend");
-
+app.UseCors("AllowVercel");
 app.UseAuthentication(); 
 app.UseAuthorization();
 
