@@ -14,6 +14,13 @@ using ShopAPI.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Render / Container ortamlarında inotify FileSystemWatcher hatasını önleme
+builder.Configuration.Sources.Clear();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables();
+
 // 1. Servisler
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
@@ -42,7 +49,7 @@ builder.Services.AddCors(options =>
     });
 }); 
 
-// 2. JWT Ayarları (Anahtarı burada tek bir noktadan yönetiyoruz)
+
 var tokenKey = "bu-benim-coook-uzun-ve-guvenli-anahtarim-32-karakterden-fazla-olmali-mutlaka";
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
