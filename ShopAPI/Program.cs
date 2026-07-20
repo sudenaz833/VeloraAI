@@ -98,10 +98,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-// Veritabanı migration işlemini arka planda çalıştır (Port açılışını engellememesi için)
-Task.Run(() =>
+// Veritabanı migration işlemini senkron olarak çalıştır (Tabloların hazır olduğundan emin olmak için)
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
     try
@@ -115,6 +114,6 @@ Task.Run(() =>
     {
         logger.LogError(ex, "Veritabanı ilklendirilirken bir hata oluştu: " + ex.Message);
     }
-});
+}
 
 app.Run();
