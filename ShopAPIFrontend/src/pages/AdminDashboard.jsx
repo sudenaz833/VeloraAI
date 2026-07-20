@@ -430,28 +430,21 @@ function AdminDashboard() {
                           <span className="text-charcoal-500 text-[11px] block">{customerEmail}</span>
                         </td>
                         <td className="p-4 text-charcoal-800">
-                          <div className="flex flex-col gap-1.5 max-w-md">
+                          <ul className="space-y-1.5 min-w-[200px]">
                             {productSummary.split(', ').map((prod, idx) => {
                               const match = prod.match(/(.+)\s+\((\d+)\s*Adet\)/i) || prod.match(/(.+)\s+\((\d+)\)/);
                               const name = match ? match[1].trim() : prod;
                               const count = match ? match[2] : '1';
 
                               return (
-                                <div
-                                  key={idx}
-                                  className="flex items-center justify-between gap-3 bg-white border border-gold-200/70 px-3 py-1.5 rounded-sm shadow-2xs hover:border-gold-400 transition-all duration-200"
-                                >
-                                  <span className="font-serif font-medium text-charcoal-900 text-xs truncate max-w-[180px] sm:max-w-[240px]" title={name}>
-                                    {name}
-                                  </span>
-                                  <span className="shrink-0 bg-gold-100/90 border border-gold-300/80 text-gold-900 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                                    <span className="text-[9px] text-gold-700">x</span>
-                                    <span>{count} Adet</span>
-                                  </span>
-                                </div>
+                                <li key={idx} className="flex items-center gap-2 text-xs">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-gold-400 shrink-0" />
+                                  <span className="font-medium text-charcoal-900">{name}</span>
+                                  <span className="text-gold-700 font-semibold text-[11px]">({count} Adet)</span>
+                                </li>
                               );
                             })}
-                          </div>
+                          </ul>
                         </td>
                         <td className="p-4 text-charcoal-400 whitespace-nowrap">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</td>
                         <td className="p-4 text-gold-600 font-semibold whitespace-nowrap">{item.totalPrice} TL</td>
