@@ -7,7 +7,8 @@ namespace ShopAPI.Entities
     [Table("product")] 
     public class Product
     {
-        [Column("product_id")] 
+        [Column("product_id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
 
         [Column("product_name")]
