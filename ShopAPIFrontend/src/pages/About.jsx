@@ -21,7 +21,7 @@ function About() {
             {/* Sol Görsel - Altın Serumu Görseli */}
             <div className="flex-1 w-full relative aspect-[4/3] rounded-none overflow-hidden shadow-2xl border border-gold-200/20 group">
               <img
-                src="/velora_about2.png"
+                src="/images/velora_about2.png"
                 alt="Velora Luxury Skincare Gold Serums"
                 className="w-full h-full object-cover transition-transform duration-[10000ms] ease-out group-hover:scale-105"
               />
@@ -61,7 +61,7 @@ function About() {
             {/* Sağ Görsel - Laboratuvar Kimya Görseli */}
             <div className="flex-1 w-full relative aspect-[4/3] rounded-none overflow-hidden shadow-2xl border border-gold-200/20 group">
               <img
-                src="/velora_about_science_image.png"
+                src="/images/velora_about_science_image.png"
                 alt="Velora Skincare Lab and Science"
                 className="w-full h-full object-cover transition-transform duration-[10000ms] ease-out group-hover:scale-105"
               />

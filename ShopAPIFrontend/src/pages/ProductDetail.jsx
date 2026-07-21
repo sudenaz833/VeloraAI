@@ -229,7 +229,7 @@ function ProductDetail() {
                     {/* Sol - Ürün Görseli */}
                     <div className="aspect-square w-full overflow-hidden bg-charcoal-50 border border-charcoal-100">
                         <img
-                            src={product.imageUrl || "/velora_hero_image.png"}
+                            src={product.imageUrl || "/images/velora_hero_image.png"}
                             alt={product.productName}
                             className="w-full h-full object-cover transition-transform duration-[6000ms] hover:scale-105"
                         />
@@ -467,38 +467,60 @@ function ProductDetail() {
                                         
                                         {/* Inline Düzenleme Formu veya Normal Metin */}
                                         {editingCommentId === comment.commentId ? (
-                                            <div className="space-y-3 pt-2 bg-charcoal-50 p-4 border border-charcoal-100 mt-2">
-                                                <div className="flex gap-1.5">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <button
-                                                            key={star}
-                                                            type="button"
-                                                            onClick={() => setEditingRating(star)}
-                                                            className="focus:outline-none cursor-pointer"
-                                                        >
-                                                            <Star className={`w-4 h-4 pointer-events-none ${star <= editingRating ? "fill-gold-500 text-gold-500" : "text-charcoal-200 hover:text-gold-300"}`} />
-                                                        </button>
-                                                    ))}
+                                            <div className="space-y-4 pt-3 bg-charcoal-50/80 p-4 sm:p-5 border border-gold-200/80 mt-2 rounded-sm shadow-2xs">
+                                                {/* Yıldız Derecelendirme Düzenleme */}
+                                                <div className="space-y-1.5">
+                                                    <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">
+                                                        Derecelendirmeyi Değiştir
+                                                    </label>
+                                                    <div className="flex gap-1.5">
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <button
+                                                                key={star}
+                                                                type="button"
+                                                                onClick={() => setEditingRating(star)}
+                                                                className="focus:outline-none transition-transform duration-200 hover:scale-110 cursor-pointer p-0.5"
+                                                            >
+                                                                <Star
+                                                                    className={`w-6 h-6 ${
+                                                                        star <= editingRating
+                                                                            ? "fill-gold-500 text-gold-500"
+                                                                            : "text-charcoal-200 hover:text-gold-300"
+                                                                    }`}
+                                                                />
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                                <textarea
-                                                    rows="2"
-                                                    value={editingText}
-                                                    onChange={(e) => setEditingText(e.target.value)}
-                                                    className="w-full bg-white border border-charcoal-100 p-2.5 outline-none text-sm transition-all duration-300 font-light resize-none focus:border-gold-500"
-                                                    required
-                                                />
-                                                <div className="flex gap-2 justify-end">
+
+                                                {/* Yorum Metni */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">
+                                                        Yorumunuz
+                                                    </label>
+                                                    <textarea
+                                                        rows="3"
+                                                        value={editingText}
+                                                        onChange={(e) => setEditingText(e.target.value)}
+                                                        placeholder="Yorumunuzu güncelleyin..."
+                                                        className="w-full bg-white border border-charcoal-100 p-3 outline-none text-sm transition-all duration-300 font-light resize-none focus:border-gold-500"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                {/* Butonlar */}
+                                                <div className="flex gap-2 justify-end pt-1">
                                                     <button
                                                         type="button"
                                                         onClick={() => setEditingCommentId(null)}
-                                                        className="text-[10px] tracking-widest text-charcoal-500 hover:text-charcoal-700 font-medium uppercase py-1.5 px-3 border border-charcoal-200 cursor-pointer transition-all"
+                                                        className="text-[10px] tracking-widest text-charcoal-500 hover:text-charcoal-700 font-medium uppercase py-2 px-4 border border-charcoal-200 cursor-pointer transition-all"
                                                     >
                                                         İptal
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => handleUpdateComment(comment.commentId)}
-                                                        className="text-[10px] tracking-widest bg-charcoal-900 text-white hover:bg-charcoal-800 font-medium uppercase py-1.5 px-3 cursor-pointer transition-all"
+                                                        className="text-[10px] tracking-widest bg-charcoal-900 text-white hover:bg-charcoal-800 font-medium uppercase py-2 px-5 cursor-pointer transition-all shadow-xs"
                                                     >
                                                         Kaydet
                                                     </button>

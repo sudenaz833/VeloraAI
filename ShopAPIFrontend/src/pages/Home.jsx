@@ -50,7 +50,7 @@ function Home() {
           {/* Hero Right Image */}
           <div className="flex-1 w-full max-w-md lg:max-w-none relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-none overflow-hidden shadow-2xl border border-gold-200/20 group">
             <img
-              src="/velora_hero_image.png"
+              src="/images/velora_hero_image.png"
               alt="Velora Luxury Skincare Collection"
               className="w-full h-full object-cover transition-transform duration-[10000ms] ease-out group-hover:scale-105"
             />

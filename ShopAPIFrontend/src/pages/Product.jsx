@@ -185,7 +185,7 @@ function Product() {
                       <div className="aspect-square w-full overflow-hidden bg-charcoal-50 relative mb-4 sm:mb-5">
                         <Link to={`/product/${product.productId}`} className="hover:text-gold-500 transition-colors block w-full h-full">
                           <img
-                            src={product.imageUrl || "/velora_hero_image.png"}
+                            src={product.imageUrl || "/images/velora_hero_image.png"}
                             alt={product.productName}
                             className="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
                           />

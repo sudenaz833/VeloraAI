@@ -204,7 +204,7 @@ function Cart() {
                                         <div className="flex items-center gap-3 sm:gap-4.5 flex-1">
                                             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-charcoal-50 border border-charcoal-100 shrink-0 overflow-hidden">
                                                 <img
-                                                    src={item.imageUrl || "/velora_hero_image.png"}
+                                                    src={item.imageUrl || "/images/velora_hero_image.png"}
                                                     alt={item.productName}
                                                     className="w-full h-full object-cover"
                                                 />

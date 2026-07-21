@@ -112,7 +112,7 @@ function Login() {
       {/* Sol Görsel Alanı (Split-Screen) */}
       <div className="relative hidden lg:block lg:w-1/2 h-screen overflow-hidden">
         <img
-          src="/velora_login_visual.png"
+          src="/images/velora_login_visual.png"
           alt="Velora Luxury Cosmetics"
           className="w-full h-full object-cover select-none transition-transform duration-[10000ms] hover:scale-105"
         />

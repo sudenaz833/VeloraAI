@@ -350,7 +350,7 @@ function AdminDashboard() {
                   {product.map((item) => ( 
                     <tr key={item.productId} className="hover:bg-charcoal-50/50 transition-colors">
                       <td className="p-4">
-                        <img src={item.imageUrl || "/velora_hero_image.png"} className="w-10 h-10 object-cover border border-charcoal-100" alt={item.productName} />
+                        <img src={item.imageUrl || "/images/velora_hero_image.png"} className="w-10 h-10 object-cover border border-charcoal-100" alt={item.productName} />
                       </td>
                       <td className="p-4 font-serif text-sm font-medium text-charcoal-900">{item.productName}</td>
                       <td className="p-4 text-charcoal-500">{item.category}</td>
@@ -648,7 +648,7 @@ function AdminDashboard() {
                   type="text"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="/product1.png"
+                  placeholder="/images/product1.png"
                   className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-3 focus:border-gold-500 focus:outline-none"
                 />
               </div>
