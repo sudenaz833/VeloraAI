@@ -81,6 +81,9 @@ function Login() {
       }
 
       setLoading(true);
+      const registerTimeoutId = setTimeout(() => {
+        setLoadingText("Sunucu uyandırılıyor, bu işlem 30-50 saniye sürebilir.Lütfen bekleyinz");
+      },5000);
       try {
         await api.post('customers/register', {
           firstName,
