@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import axiosRetry from 'axios-retry';
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5131/api/',
   timeout: 10000,
@@ -8,6 +8,15 @@ const axiosInstance = axios.create({
   },
 });
 
+axiosRetry(axiosInstance, {
+  retries: 3,
+  retryDelay: (retryCount) =>{
+    return retryCount * 3000;
+  },
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.response?.status >= 500;
+  }
+});
 // otomatik olarak  tokenı  http başlığında backende iletme 
 axiosInstance.interceptors.request.use(
   (config) => {

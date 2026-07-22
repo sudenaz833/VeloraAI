@@ -197,7 +197,7 @@ function Product() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Koleksiyonda ürün hecesi veya kelimesi ara..."
+                  placeholder="Koleksiyonda ara..."
                   className="w-full bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 placeholder-charcoal-400 text-sm py-3.5 pl-11 pr-10 outline-none transition-all duration-300 shadow-sm"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />

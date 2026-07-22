@@ -17,22 +17,31 @@ function Login() {
   const [address, setAddress] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("Giriş yapılıyor...");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const loading = isLoading;
+  const setLoading = setIsLoading;
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setLoadingText("Giriş yapılıyor...");
     setError(null);
     setSuccess(false);
 
     if (activeTab === 'login') {
       if (!email || !password) {
         setError('Lütfen e-posta ve şifre alanlarını doldurun.');
+        setIsLoading(false);
         return;
       }
 
-      setLoading(true);
+      const timeoutId = setTimeout(() => {
+        setLoadingText("Sunucu uyandırılıyor, bu işlem 30-50 saniye sürebilir. Lütfen bekleyiniz...");
+      }, 5000);
+
       try {
         const response = await api.post('auth/login', {
           email,
@@ -42,7 +51,7 @@ function Login() {
         const token = response.data?.token || response.data?.Token || response.data;
 
         if (token && typeof token === 'string') {
-          sessionStorage.setItem('token', token);//tarayıcının oturum hafızasına eklenir. sekmeler arası izole kalır
+          sessionStorage.setItem('token', token);
           setSuccess(true);
           setEmail('');
           setPassword('');
@@ -61,7 +70,9 @@ function Login() {
           setError(err.message || 'Giriş yapılırken beklenmedik bir hata oluştu.');
         }
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        setIsLoading(false);
+        setLoadingText("Giriş yapılıyor...");
       }
     } else {
       if (!firstName || !lastName || !email || !password || !phone || !address) {
@@ -164,7 +175,7 @@ function Login() {
           </div>
 
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
 
             {/* Bildirim Durumları */}
             {error && (
@@ -301,13 +312,13 @@ function Login() {
             {/* Gönder Butonu */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-charcoal-900 hover:bg-charcoal-800 text-white font-medium py-3.5 tracking-[0.2em] uppercase text-xs transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed disabled:bg-charcoal-300 shadow-sm mt-8"
             >
-              {loading ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  İşlem Yapılıyor...
+                  {loadingText}
                 </>
               ) : (
                 activeTab === 'login' ? 'GİRİŞ YAP' : 'ÜYE OL'
