@@ -4,10 +4,11 @@
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
 ![React](https://img.shields.io/badge/React-18.0-61DAFB?style=for-the-badge&logo=react)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon.tech-4169E1?style=for-the-badge&logo=postgresql)
+![Groq AI](https://img.shields.io/badge/Groq_AI-Llama_3.3-orange?style=for-the-badge&logo=openai)
 ![Vercel](https://img.shields.io/badge/Vercel-Hosted-000000?style=for-the-badge&logo=vercel)
 ![Render](https://img.shields.io/badge/Render-Hosted-46E3B7?style=for-the-badge&logo=render)
 
-Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik markası **VELORA** için geliştirilmiş fullstack e-ticaret platformu.
+Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik markası **VELORA** için geliştirilmiş fullstack e-ticaret platformu. Artık **Yapay Zeka Destekli Kişisel Cilt Analizörü (AI Dermatologist)** entegrasyonu ile cildinize en uygun lüks bakım rutinini saniyeler içinde oluşturuyor.
 
 ---
 
@@ -20,6 +21,12 @@ Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik 
 ---
 
 ## ✨ Öne Çıkan Özellikler
+
+### 🤖 **Yapay Zeka (AI) Destekli Cilt Analizi (Velora AI Dermatologist)**
+- **Kişiselleştirilmiş Cilt Analiz Testi (Skin Care Quiz):** Kullanıcının cilt tipi, yaş grubu, hassasiyet düzeyi ve cilt endişelerini (gözenek, sivilce, leke, kırışıklık, nemsizlik vb.) analiz eden interaktif anket.
+- **Groq Cloud & Llama 3.3 Entegrasyonu:** Groq API aracılığıyla en son teknoloji `llama-3.3-70b-versatile` dil modeliyle entegrasyon.
+- **Akıllı Ürün Eşleştirme:** Stoktaki aktif ürünlerin içerikleri ve kullanım zamanlarıyla kullanıcının endişelerini eşleştiren dinamik öneri algoritması.
+- **Dermatolojik Tavsiyeler:** Yapay zeka tarafından hazırlanan Türkçe, profesyonel, akıcı ve kişiselleştirilmiş cilt bakım önerileri ile özel rutinler.
 
 ### 👤 **Kullanıcı & Güvenlik Yönetimi**
 - **JWT Bearer Token** tabanlı güvenli kimlik doğrulama.
@@ -56,6 +63,7 @@ Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik 
 
 ### **Backend**
 - **Framework:** .NET 8 ASP.NET Core Web API
+- **AI Entegrasyonu:** Groq API & OpenAI .NET SDK (`llama-3.3-70b-versatile`)
 - **ORM & DB:** Entity Framework Core 8 (Code-First)
 - **Database Driver:** Npgsql PostgreSQL
 - **Security:** JWT (JSON Web Tokens), BCrypt.Net
@@ -75,19 +83,19 @@ Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik 
 ```text
 ShopAPIProject/
 ├── ShopAPI/                     # .NET 8 Web API (Backend)
-│   ├── Controllers/             # API Endpoint'leri (Products, Basket, Order, Auth vb.)
+│   ├── Controllers/             # API Endpoint'leri (Products, Basket, Order, Auth, SkinCare vb.)
 │   ├── Data/                    # DbContext ve EF Core Konfigürasyonları
-│   ├── DTOs/                    # Data Transfer Objects
+│   ├── DTOs/                    # Data Transfer Objects (SkincareRecommendationResponseDto vb.)
 │   ├── Entities/                # Veritabanı Modelleri (Product, Customer, Order vb.)
 │   ├── Mappings/                # AutoMapper Profilleri
-│   ├── Services/                # İş Mantığı Katmanı (Business Layer)
+│   ├── Services/                # İş Mantığı Katmanı & Yapay Zeka Servisleri (GroqService vb.)
 │   ├── Validators/              # FluentValidation Kuralları
 │   └── Dockerfile               # Production Docker Yapılandırması
 │
 ├── ShopAPIFrontend/             # React + Vite (Frontend)
 │   ├── src/
 │   │   ├── api/                 # Axios Yapılandırması ve Interceptor'lar
-│   │   ├── pages/               # Sayfa Bileşenleri (Home, Product, Cart, Admin vb.)
+│   │   ├── pages/               # Sayfa Bileşenleri (Home, SkinCareQuiz, Cart, Admin vb.)
 │   │   └── App.jsx              # Routing & Toast Provider
 │   ├── vercel.json              # Vercel SPA Routing Konfigürasyonu
 │   └── Dockerfile               # Multi-stage Nginx Build
@@ -120,7 +128,7 @@ docker-compose up --build
 #### **Backend (.NET API)**
 ```bash
 cd ShopAPI
-# appsettings.json dosyasında veritabanı bağlantınızı ayarlayın
+# appsettings.json dosyasında veritabanı bağlantınızı ve Groq API anahtarınızı ayarlayın
 dotnet restore
 dotnet ef database update
 dotnet run
@@ -149,6 +157,11 @@ VITE_API_URL=https://<https://shopapi-backend-epzw.onrender.com>.onrender.com/ap
 {
   "ConnectionStrings": {
     "DefaultConnection": "Host=ep-little-star-asc1sa3z.c-4.eu-central-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_4ENYQcAb9ItS;SSL Mode=Require;Trust Server Certificate=true;"
+  },
+  "GroqSettings": {
+    "ApiKey": "YOUR_GROQ_API_KEY",
+    "BaseUrl": "https://api.groq.com/openai/v1",
+    "Model": "llama-3.3-70b-versatile"
   }
 }
 ```
