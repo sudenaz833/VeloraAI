@@ -12,6 +12,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=host.docker.internal;Database=postgres;Username=sudenazkocabicak;
+      - GroqSettings__ApiKey=${GROQ_API_KEY}
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

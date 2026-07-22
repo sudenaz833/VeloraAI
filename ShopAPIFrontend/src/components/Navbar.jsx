@@ -11,7 +11,8 @@ import {
   Shield,
   Home as HomeIcon,
   Info,
-  Package
+  Package,
+  Sparkles
 } from 'lucide-react';
 import api from '../api/axiosConfig';
 
@@ -32,7 +33,6 @@ function Navbar({ cartItemsCount }) {
       }
     }
 
-    // Eğer dışarıdan cartItemsCount geçilmediyse sepet sayısını API'den çek
     if (cartItemsCount === undefined && role !== 'Admin' && token) {
       api.get('basket')
         .then(res => {
@@ -47,8 +47,9 @@ function Navbar({ cartItemsCount }) {
 
   const navLinks = [
     { name: 'Anasayfa', path: '/home', icon: HomeIcon },
-    { name: 'Hakkımızda', path: '/about', icon: Info },
     { name: 'Ürünler', path: '/products', icon: Package },
+    { name: 'AI Cilt Analizi', path: '/skincare-quiz', icon: Sparkles },
+    { name: 'Hakkımızda', path: '/about', icon: Info },
   ];
 
   return (

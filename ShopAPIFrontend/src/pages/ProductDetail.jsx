@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from '../api/axiosConfig';
 import {
@@ -22,10 +22,14 @@ import Navbar from '../components/Navbar';
 function ProductDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [product, setProduct] = useState(null);
     const [comments, setComments] = useState([]);
     const [profile, setProfile] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const hasSavedQuiz = !!sessionStorage.getItem('velora_skincare_recommendation');
+    const cameFromQuiz = location.state?.fromQuiz || hasSavedQuiz;
     const [error, setError] = useState(null);
     const [commentText, setCommentText] = useState('');
     const [rating, setRating] = useState(5);
@@ -215,12 +219,22 @@ function ProductDetail() {
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 space-y-10 sm:space-y-16 flex-1 w-full">
 
-                {/* Geri Dön Linki */}
-                <div>
+                {/* Geri Dön Linkleri */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
                     <Link to="/products" className="inline-flex items-center gap-2 text-xs tracking-widest text-charcoal-500 hover:text-gold-600 uppercase transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         <span>Tüm Ürünlere Dön</span>
                     </Link>
+
+                    {cameFromQuiz && (
+                        <Link
+                            to="/skincare-quiz"
+                            className="inline-flex items-center gap-2 text-xs tracking-widest text-gold-900 bg-gold-50/90 hover:bg-gold-100 px-4 py-2 border border-gold-300 rounded-xs uppercase font-semibold transition-all shadow-xs group"
+                        >
+                            <Sparkles className="w-4 h-4 text-gold-600 group-hover:rotate-12 transition-transform" />
+                            <span>Cilt Analiz Sonucuma Dön</span>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Ürün Detay Bölümü (Split Screen) */}

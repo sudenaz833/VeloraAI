@@ -8,6 +8,7 @@ import Product from './pages/Product';
 import Cart from './pages/Cart';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductDetail from './pages/ProductDetail';
+import SkinCareQuiz from './pages/SkinCareQuiz';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -25,6 +26,8 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/product/:id" element={<ProductDetail/>}/>
+        <Route path="/skincare-quiz" element={<SkinCareQuiz />} />
+        <Route path="/skincare" element={<SkinCareQuiz />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

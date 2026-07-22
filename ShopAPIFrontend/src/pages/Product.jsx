@@ -6,7 +6,9 @@ import {
   Loader2,
   Sparkles,
   Star,
-  ShoppingBag
+  ShoppingBag,
+  Search,
+  X
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -74,6 +76,7 @@ function Product() {
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Cilt Bakımı');
   const [role, setRole] = useState('User');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // Token'dan rolü oku
@@ -113,7 +116,24 @@ function Product() {
     }
   };
 
-  const filteredProducts = products.filter((product) => product.category === activeCategory);
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = product.category === activeCategory;
+    const matchesSearch = product.productName.toLocaleLowerCase('tr-TR')
+      .includes(searchTerm.toLocaleLowerCase('tr-TR'));
+    return matchesCategory && matchesSearch;
+  });
+
+  // Diğer kategorilerdeki eşleşmeleri bulma
+  const categoriesWithMatches = products.reduce((acc, product) => {
+    if (product.category !== activeCategory) {
+      const matchesSearch = product.productName.toLocaleLowerCase('tr-TR')
+        .includes(searchTerm.toLocaleLowerCase('tr-TR'));
+      if (matchesSearch) {
+        acc[product.category] = (acc[product.category] || 0) + 1;
+      }
+    }
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
@@ -169,10 +189,59 @@ function Product() {
             </aside>
 
             {/* Sağ Ürün Izgarası (Grid) */}
-            <div className="flex-1 w-full">
+            <div className="flex-1 w-full space-y-6">
+
+              {/* Arama Kutusu (Search Box) */}
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Koleksiyonda ürün hecesi veya kelimesi ara..."
+                  className="w-full bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 placeholder-charcoal-400 text-sm py-3.5 pl-11 pr-10 outline-none transition-all duration-300 shadow-sm"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
+                {searchTerm && (
+                  <button 
+                    onClick={() => setSearchTerm('')} 
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-gold-600 transition-colors p-1"
+                    title="Aramayı Temizle"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
               {filteredProducts.length === 0 ? (
-                <div className="text-center py-16 sm:py-20 bg-white border border-charcoal-100 p-6">
-                  <p className="text-sm text-charcoal-400 font-light">Bu kategoriye henüz ürün eklenmemiş.</p>
+                <div className="text-center py-16 sm:py-20 bg-white border border-charcoal-100 p-6 space-y-4">
+                  <p className="text-sm text-charcoal-500 font-light">
+                    {searchTerm ? (
+                      <>
+                        <span className="font-semibold text-charcoal-950">"{searchTerm}"</span> hecesini içeren bir ürün bu kategoride bulunamadı.
+                      </>
+                    ) : (
+                      "Bu kategoriye henüz ürün eklenmemiş."
+                    )}
+                  </p>
+                  
+                  {searchTerm && Object.keys(categoriesWithMatches).length > 0 && (
+                    <div className="pt-4 border-t border-charcoal-50 max-w-md mx-auto">
+                      <p className="text-xs text-charcoal-400 uppercase tracking-widest mb-3">Diğer Kategorilerdeki Eşleşmeler:</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {Object.entries(categoriesWithMatches).map(([category, count]) => (
+                          <button
+                            key={category}
+                            onClick={() => {
+                              setActiveCategory(category);
+                            }}
+                            className="text-xs bg-charcoal-50 border border-charcoal-200 hover:border-gold-300 hover:text-gold-600 px-3 py-1.5 transition-all duration-300 font-medium text-charcoal-700 cursor-pointer"
+                          >
+                            {category} ({count})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">

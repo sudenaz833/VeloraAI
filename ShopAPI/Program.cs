@@ -37,6 +37,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICommentService,CommentService>();
+builder.Services.AddScoped<GroqService>();
 
 builder.Services.AddCors(options =>
 {
