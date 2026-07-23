@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -7,8 +7,10 @@ import {
   Leaf
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../context/LanguageContext';
 
 function Home() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
 
@@ -23,17 +25,16 @@ function Home() {
           <div className="flex-1 space-y-6 sm:space-y-8 text-center lg:text-left z-10">
             <div className="inline-flex items-center gap-2 bg-gold-100/60 px-3.5 py-1.5 rounded-full border border-gold-200/50 text-gold-800 text-[10px] sm:text-xs tracking-[0.15em] uppercase font-medium">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Premium Cilt Bakımı</span>
+              <span>{t('home.badge')}</span>
             </div>
 
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-charcoal-900 leading-[1.15] font-light tracking-wide">
-              Zarafetin <br className="hidden sm:inline" />
-              <span className="italic font-normal text-gold-600">Yeni Tanımı</span>
+              {t('home.heroTitleLine1')} <br className="hidden sm:inline" />
+              <span className="italic font-normal text-gold-600">{t('home.heroTitleLine2')}</span>
             </h1>
 
             <p className="text-charcoal-500 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg mx-auto lg:mx-0 font-light">
-              Cilt bakımında lüksün ve doğallığın mükemmel uyumunu keşfedin.
-              Velora'nın ödüllü formülleri ve seçkin bileşenleri ile zamansız güzelliği deneyimleyin.
+              {t('home.heroDesc')}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
@@ -41,7 +42,7 @@ function Home() {
                 to="/products"
                 className="w-full sm:w-auto bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs tracking-[0.2em] font-medium uppercase py-3.5 sm:py-4 px-8 transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                <span>Hemen Keşfet</span>
+                <span>{t('home.exploreBtn')}</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
             </div>
@@ -64,8 +65,8 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
           <div className="text-center max-w-xl mx-auto space-y-3 sm:space-y-4 mb-12 sm:mb-16 md:mb-20">
-            <span className="text-[10px] tracking-[0.25em] text-gold-600 uppercase font-semibold block">Velora Felsefesi</span>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-charcoal-900 tracking-wide font-light">Değerlerimiz</h2>
+            <span className="text-[10px] tracking-[0.25em] text-gold-600 uppercase font-semibold block">{t('home.valuesBadge')}</span>
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-charcoal-900 tracking-wide font-light">{t('home.valuesTitle')}</h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-2" />
           </div>
 
@@ -76,9 +77,9 @@ function Home() {
               <div className="w-12 h-12 bg-gold-100/60 rounded-full flex items-center justify-center mb-6 group-hover:bg-gold-500 transition-colors duration-300">
                 <Sparkles className="w-6 h-6 text-gold-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">İnovasyon</h3>
+              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">{t('home.innovationTitle')}</h3>
               <p className="text-charcoal-500 text-xs md:text-sm leading-relaxed font-light">
-                Velora kozmetik olarak biyoteknolojik gelişmeleri yakından takip ederek, cildinize en iyi sonuçları veren yenilikçi formüller geliştiriyoruz.
+                {t('home.innovationDesc')}
               </p>
             </div>
 
@@ -87,9 +88,9 @@ function Home() {
               <div className="w-12 h-12 bg-gold-100/60 rounded-full flex items-center justify-center mb-6 group-hover:bg-gold-500 transition-colors duration-300">
                 <ShieldCheck className="w-6 h-6 text-gold-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">Lüks ve Seçkinlik</h3>
+              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">{t('home.luxuryTitle')}</h3>
               <p className="text-charcoal-500 text-xs md:text-sm leading-relaxed font-light">
-                Kişiye özel hissettiren lüks dokular, zengin koku esansları ve birinci sınıf ambalaj tasarımları ile bakım ritüelinizi unutulmaz bir deneyime dönüştürüyoruz.
+                {t('home.luxuryDesc')}
               </p>
             </div>
 
@@ -98,9 +99,9 @@ function Home() {
               <div className="w-12 h-12 bg-gold-100/60 rounded-full flex items-center justify-center mb-6 group-hover:bg-gold-500 transition-colors duration-300">
                 <Leaf className="w-6 h-6 text-gold-600 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">Doğallık ve Sürdürülebilirlik</h3>
+              <h3 className="font-serif text-base sm:text-lg text-charcoal-900 font-medium tracking-wide mb-3">{t('home.naturalTitle')}</h3>
               <p className="text-charcoal-500 text-xs md:text-sm leading-relaxed font-light">
-                Doğadan aldığımız ilhamı temiz içerikli ve çevre dostu üretim metodlarıyla birleştiriyoruz. Cildinize ve dünyamıza saygılı ürünler sunuyoruz.
+                {t('home.naturalDesc')}
               </p>
             </div>
 
@@ -114,41 +115,41 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-12">
 
           <div className="space-y-4">
-            <h3 className="font-serif text-xl tracking-[0.25em] text-white uppercase font-light">VELORA</h3>
+            <h3 className="font-serif text-xl tracking-[0.25em] text-white uppercase font-light">{t('footer.aboutTitle')}</h3>
             <p className="text-charcoal-400 text-xs leading-relaxed font-light">
-              Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik markası.
+              {t('footer.aboutDesc')}
             </p>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">Hızlı Menü</h4>
+            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">{t('footer.quickMenuTitle')}</h4>
             <ul className="space-y-2 text-xs text-charcoal-400">
-              <li><Link to="/home" className="hover:text-gold-400 transition-colors">Anasayfa</Link></li>
-              <li><Link to="/about" className="hover:text-gold-400 transition-colors">Hakkımızda</Link></li>
-              <li><Link to="/products" className="hover:text-gold-400 transition-colors">Ürünler</Link></li>
+              <li><Link to="/home" className="hover:text-gold-400 transition-colors">{t('navbar.home')}</Link></li>
+              <li><Link to="/about" className="hover:text-gold-400 transition-colors">{t('navbar.about')}</Link></li>
+              <li><Link to="/products" className="hover:text-gold-400 transition-colors">{t('navbar.products')}</Link></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">Yasal Bilgiler</h4>
+            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">{t('footer.legalTitle')}</h4>
             <ul className="space-y-2 text-xs text-charcoal-400">
-              <li><a href="#terms" className="hover:text-gold-400 transition-colors">Kullanım Koşulları</a></li>
-              <li><a href="#privacy" className="hover:text-gold-400 transition-colors">Gizlilik Politikası</a></li>
-              <li><a href="#cookies" className="hover:text-gold-400 transition-colors">Çerez Politikası</a></li>
+              <li><a href="#terms" className="hover:text-gold-400 transition-colors">{t('footer.terms')}</a></li>
+              <li><a href="#privacy" className="hover:text-gold-400 transition-colors">{t('footer.privacy')}</a></li>
+              <li><a href="#cookies" className="hover:text-gold-400 transition-colors">{t('footer.cookies')}</a></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">Bülten Aboneliği</h4>
-            <p className="text-charcoal-400 text-xs font-light">Koleksiyonlar ve özel kampanyalardan ilk siz haberdar olun.</p>
+            <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold text-white">{t('footer.newsletterTitle')}</h4>
+            <p className="text-charcoal-400 text-xs font-light">{t('footer.newsletterDesc')}</p>
             <div className="flex border-b border-charcoal-700 py-1">
               <input
                 type="email"
-                placeholder="E-posta adresiniz"
+                placeholder={t('footer.emailPlaceholder')}
                 className="bg-transparent border-none outline-none text-xs text-white placeholder-charcoal-500 w-full font-light"
               />
               <button className="text-gold-400 hover:text-gold-300 font-medium text-xs tracking-wider uppercase ml-2">
-                KAYDOL
+                {t('footer.subscribeBtn')}
               </button>
             </div>
           </div>
@@ -157,7 +158,7 @@ function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-center">
           <span className="text-[10px] tracking-widest text-charcoal-500 uppercase">
-            © 2026 VELORA Cosmetics. Tüm Hakları Saklıdır.
+            {t('footer.copyright')}
           </span>
           <div className="flex gap-4 text-xs text-charcoal-500">
             <a href="#instagram" className="hover:text-gold-400 transition-colors">Instagram</a>

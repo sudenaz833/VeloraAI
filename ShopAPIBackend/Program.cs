@@ -15,10 +15,11 @@ using ShopAPI.Entities;
 var builder = WebApplication.CreateBuilder(args);
 
 // Render / Container ortamlarında inotify FileSystemWatcher hatasını önleme
-builder.Configuration.Sources.Clear();
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
+    .AddUserSecrets<Program>(optional: true)
     .AddEnvironmentVariables();
 
 // 1. Servisler

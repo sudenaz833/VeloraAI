@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useLanguage } from "../context/LanguageContext";
 import api from '../api/axiosConfig';
 import {
     ArrowLeft,
@@ -19,7 +20,39 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
+const translateSkinType = (type, language) => {
+    if (language === 'tr') return type;
+    const mapping = {
+        "Hassas": "Sensitive",
+        "Kuru": "Dry",
+        "Karma": "Combination",
+        "Yağlı": "Oily",
+        "Normal": "Normal",
+        "Tüm Cilt Tipleri": "All Skin Types",
+        "Hassas ve Kuru": "Sensitive & Dry"
+    };
+    return mapping[type] || type;
+};
+
+const translateConcern = (concern, language) => {
+    if (language === 'tr') return concern;
+    const mapping = {
+        "Akne": "Acne",
+        "Sivilce": "Acne",
+        "Leke": "Dark Spots",
+        "Kırışıklık": "Wrinkles",
+        "Yaşlanma Karşıtı": "Anti-Aging",
+        "Nemsizlik": "Dehydration",
+        "Geniş Gözenek": "Enlarged Pores",
+        "Kızarıklık": "Redness",
+        "Güneş Koruması": "Sun Protection",
+        "Cilt Bariyeri": "Skin Barrier Repair"
+    };
+    return mapping[concern] || concern;
+};
+
 function ProductDetail() {
+    const { language, t } = useLanguage();
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -59,22 +92,22 @@ function ProductDetail() {
                 setProfile(profileRes.data);
             } catch (err) {
                 console.error("Detay sayfası yükleme hatası:", err);
-                setError("Ürün detayları veya yorumlar yüklenirken hata oluştu. Lütfen daha sonra tekrar deneyin.");
+                setError(t('detail.errorLoading'));
             } finally {
                 setLoading(false);
             }
         };
         fetchProductDeatilAndComments();
-    }, [id, navigate]);
+    }, [id, navigate, t]);
 
     const handleAddToBasket = async () => {
         try {
             setAddingToBasket(true);
             await api.post('basket', { productId: parseInt(id), quantity: 1 });
-            toast.success("Ürün sepete eklendi!");
+            toast.success(language === 'tr' ? "Ürün sepete eklendi!" : "Product added to cart!");
         } catch (err) {
             console.error("Sepete ekleme hatası:", err);
-            toast.error("Ürün sepete eklenirken bir hata oluştu.");
+            toast.error(language === 'tr' ? "Ürün sepete eklenirken bir hata oluştu." : "An error occurred while adding product to cart.");
         } finally {
             setAddingToBasket(false);
         }
@@ -90,7 +123,7 @@ function ProductDetail() {
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
         if (!commentText) {
-            toast.warning("Yorum alanı boş bırakılamaz.");
+            toast.warning(t('detail.validationCommentEmpty'));
             return;
         }
         try {
@@ -102,7 +135,7 @@ function ProductDetail() {
                 rating: rating.toString(),
             };
             const response = await api.post('comments', newCommentDto);
-            toast.success("Yorumunuz başarıyla eklendi.");
+            toast.success(t('detail.commentAddedToast'));
             
             const newComments = [...comments, response.data];
             setComments(newComments);
@@ -112,14 +145,14 @@ function ProductDetail() {
             setRating(5);
         } catch (err) {
             console.error("Yorum gönderme hatası", err);
-            toast.error("Yorum eklenirken bir hata oluştu");
+            toast.error(language === 'tr' ? "Yorum eklenirken bir hata oluştu" : "An error occurred while adding comment");
         } finally {
             setSubmittingComment(false);
         }
     };
 
     const handleDeleteComment = async (commentId) => {
-        const confirmDelete = window.confirm("Bu yorumu silmek istediğinizden emin misiniz?");
+        const confirmDelete = window.confirm(t('detail.validationConfirmDelete'));
         if (!confirmDelete) return;
         try {
             setLoading(true);
@@ -129,10 +162,10 @@ function ProductDetail() {
             setComments(newComments);
             updateProductRatingLocally(newComments);
             
-            toast.success("Yorumunuz başarıyla silindi.");
+            toast.success(t('detail.commentDeletedToast'));
         } catch (err) {
             console.error("Yorum silme hatası:", err);
-            toast.error("Yorum silinirken hata oluştu.");
+            toast.error(language === 'tr' ? "Yorum silinirken hata oluştu." : "An error occurred while deleting comment.");
         } finally {
             setLoading(false);
         }
@@ -147,11 +180,11 @@ function ProductDetail() {
 
     const handleUpdateComment = async (commentId) => {
         if (commentId === null) {
-            toast.warning("Yorum kimliği bulunamadı.");
+            toast.warning(language === 'tr' ? "Yorum kimliği bulunamadı." : "Comment ID not found.");
             return;
         }
         if (!editingText.trim()) {
-            toast.warning("Yorum alanı boş bırakılamaz.");
+            toast.warning(t('detail.validationCommentEmpty'));
             return;
         }
         try {
@@ -166,10 +199,10 @@ function ProductDetail() {
             updateProductRatingLocally(newComments);
             
             setEditingCommentId(null);
-            toast.success("Yorum başarıyla güncellendi.");
+            toast.success(t('detail.commentUpdatedToast'));
         } catch (err) {
             console.error("Yorum güncelleme hatası:", err);
-            toast.error("Yorum güncellenirken bir hata oluştu.");
+            toast.error(language === 'tr' ? "Yorum güncellenirken bir hata oluştu." : "An error occurred while updating comment.");
         } finally {
             setLoading(false);
         }
@@ -192,7 +225,7 @@ function ProductDetail() {
             <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <Loader2 className="w-8 h-8 animate-spin text-gold-500 mx-auto" />
-                    <p className="text-xs tracking-[0.2em] text-charcoal-500 uppercase">Detaylar Yükleniyor...</p>
+                    <p className="text-xs tracking-[0.2em] text-charcoal-500 uppercase">{t('detail.loadingDetails')}</p>
                 </div>
             </div>
         );
@@ -202,9 +235,9 @@ function ProductDetail() {
         return (
             <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-6">
                 <div className="bg-red-50 border border-red-200 text-red-700 p-8 text-center space-y-4 max-w-md w-full">
-                    <p className="text-sm font-medium">{error || "Ürün bulunamadı."}</p>
+                    <p className="text-sm font-medium">{error || t('detail.productNotFound')}</p>
                     <Link to="/products" className="bg-charcoal-900 text-white text-xs tracking-widest uppercase py-2.5 px-6 font-medium inline-block">
-                        Ürünlere Geri Dön
+                        {t('detail.backToProductsBtn')}
                     </Link>
                 </div>
             </div>
@@ -223,7 +256,7 @@ function ProductDetail() {
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <Link to="/products" className="inline-flex items-center gap-2 text-xs tracking-widest text-charcoal-500 hover:text-gold-600 uppercase transition-colors">
                         <ArrowLeft className="w-4 h-4" />
-                        <span>Tüm Ürünlere Dön</span>
+                        <span>{t('detail.allProductsBtn')}</span>
                     </Link>
 
                     {cameFromQuiz && (
@@ -232,7 +265,7 @@ function ProductDetail() {
                             className="inline-flex items-center gap-2 text-xs tracking-widest text-gold-900 bg-gold-50/90 hover:bg-gold-100 px-4 py-2 border border-gold-300 rounded-xs uppercase font-semibold transition-all shadow-xs group"
                         >
                             <Sparkles className="w-4 h-4 text-gold-600 group-hover:rotate-12 transition-transform" />
-                            <span>Cilt Analiz Sonucuma Dön</span>
+                            <span>{t('detail.backToQuizResultBtn')}</span>
                         </Link>
                     )}
                 </div>
@@ -253,7 +286,7 @@ function ProductDetail() {
                     <div className="space-y-5 sm:space-y-6">
                         <div className="space-y-2">
                             <span className="text-[10px] tracking-[0.25em] text-gold-600 uppercase font-semibold block">
-                                {product.category || "Velora Seçkisi"}
+                                {product.category ? t('products.categoriesList.' + product.category) : t('detail.defaultCategory')}
                             </span>
                             <h1 className="font-serif text-2xl sm:text-3xl text-charcoal-900 tracking-wide font-light">
                                 {product.productName}
@@ -274,7 +307,7 @@ function ProductDetail() {
                                     ))}
                                 </div>
                                 <span className="text-xs text-charcoal-500 font-light">
-                                    {product.averageRating} / 5 ({product.commentCount} Değerlendirme)
+                                    {product.averageRating} / 5 ({product.commentCount} {t('detail.ratingOutOf')})
                                 </span>
                             </div>
                             
@@ -284,22 +317,22 @@ function ProductDetail() {
                         {/* Fiyat ve Stok */}
                         <div className="flex justify-between items-baseline py-4 border-y border-charcoal-50">
                             <div>
-                                <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">Fiyat</span>
+                                <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">{t('detail.priceLabel')}</span>
                                 <span className="text-gold-600 text-xl sm:text-2xl font-semibold">{product.price} TL</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">Stok Durumu</span>
+                                <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-light block">{t('detail.stockStatusLabel')}</span>
                                 <span className={`text-xs sm:text-sm font-medium ${product.stock > 5 ? 'text-emerald-600' : 'text-amber-600'}`}>
-                                    {product.stock > 0 ? `${product.stock} Adet Mevcut` : 'Tükendi'}
+                                    {product.stock > 0 ? `${product.stock} ${language === 'tr' ? 'Adet Mevcut' : 'pcs Available'}` : t('detail.soldOut')}
                                 </span>
                             </div>
                         </div>
 
                         {/* Ürün Açıklaması */}
                         <div className="space-y-2">
-                            <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-semibold block">Ürün Açıklaması</span>
+                            <span className="text-[10px] tracking-wider text-charcoal-400 uppercase font-semibold block">{t('detail.descriptionTitle')}</span>
                             <p className="text-charcoal-600 text-xs sm:text-sm leading-relaxed font-light">
-                                {product.description || "Velora serisinin bu eşsiz ürünü, cildinizin doğal ışıltısını ortaya çıkarmak ve derinlemesine bakım sağlamak için özel bileşenlerle formüle edilmiştir."}
+                                {product.description || t('detail.defaultDescription')}
                             </p>
                         </div>
 
@@ -325,7 +358,7 @@ function ProductDetail() {
                                     <div className="flex items-center gap-2 border-b border-gold-200/60 pb-2.5">
                                         <Sparkles className="w-4 h-4 text-gold-600" />
                                         <h3 className="font-serif text-xs sm:text-sm tracking-widest text-charcoal-900 uppercase font-medium">
-                                            Cilt Bakım Formülü & Dermokozmetik Detaylar
+                                            {t('detail.formulaDetailsTitle')}
                                         </h3>
                                     </div>
 
@@ -335,7 +368,7 @@ function ProductDetail() {
                                         {activeIngredientsList.length > 0 && (
                                             <div className="space-y-1 sm:col-span-2">
                                                 <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                                    <Sparkles className="w-3 h-3 text-gold-500" /> Aktif İçerikler
+                                                    <Sparkles className="w-3 h-3 text-gold-500" /> {t('detail.activeIngredients')}
                                                 </span>
                                                 <div className="flex flex-wrap gap-1.5 pt-0.5">
                                                     {activeIngredientsList.map((ing, idx) => (
@@ -351,12 +384,12 @@ function ProductDetail() {
                                         {skinTypesList.length > 0 && (
                                             <div className="space-y-1">
                                                 <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                                    <Shield className="w-3 h-3 text-gold-500" /> Uygun Cilt Tipleri
+                                                    <Shield className="w-3 h-3 text-gold-500" /> {t('detail.suitableSkinTypes')}
                                                 </span>
                                                 <div className="flex flex-wrap gap-1 pt-0.5">
                                                     {skinTypesList.map((st, idx) => (
                                                         <span key={idx} className="bg-emerald-50/90 border border-emerald-200 text-emerald-950 text-[10px] px-2 py-0.5 rounded-full font-medium">
-                                                            {st}
+                                                            {translateSkinType(st, language)}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -367,11 +400,11 @@ function ProductDetail() {
                                         {product.usageTime && (
                                             <div className="space-y-1">
                                                 <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                                    <Clock className="w-3 h-3 text-gold-500" /> Kullanım Zamanı
+                                                    <Clock className="w-3 h-3 text-gold-500" /> {t('detail.usageTime')}
                                                 </span>
                                                 <div className="pt-0.5">
                                                     <span className="inline-block bg-charcoal-900 text-gold-400 font-mono text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider rounded-xs">
-                                                        {product.usageTime}
+                                                        {t('detail.usageTimeList.' + product.usageTime) || product.usageTime}
                                                     </span>
                                                 </div>
                                             </div>
@@ -381,12 +414,12 @@ function ProductDetail() {
                                         {concernsList.length > 0 && (
                                             <div className="space-y-1 sm:col-span-2">
                                                 <span className="text-[10px] tracking-wider text-gold-700 uppercase font-semibold flex items-center gap-1">
-                                                    <Target className="w-3 h-3 text-gold-500" /> Hedeflenen Cilt Sorunları
+                                                    <Target className="w-3 h-3 text-gold-500" /> {t('detail.concernsTitle')}
                                                 </span>
                                                 <div className="flex flex-wrap gap-1.5 pt-0.5">
                                                     {concernsList.map((concern, idx) => (
                                                         <span key={idx} className="bg-amber-50/90 border border-amber-200 text-amber-950 text-[10px] px-2.5 py-0.5 rounded-xs font-medium">
-                                                            ✓ {concern}
+                                                            ✓ {translateConcern(concern, language)}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -407,12 +440,12 @@ function ProductDetail() {
                             {addingToBasket ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Ekleniyor...
+                                    {t('detail.addingToBasketBtn')}
                                 </>
                             ) : (
                                 <>
                                     <ShoppingBag className="w-4 h-4" />
-                                    SEPETE EKLE
+                                    {t('detail.addToBasketBtn')}
                                 </>
                             )}
                         </button>
@@ -427,12 +460,12 @@ function ProductDetail() {
                         <div className="flex items-center gap-2 pb-4 border-b border-charcoal-50">
                             <MessageSquare className="w-5 h-5 text-gold-500" />
                             <h3 className="font-serif text-lg sm:text-xl text-charcoal-900 tracking-wide font-light">
-                                Yorumlar & Değerlendirmeler ({comments.length})
+                                {t('detail.commentsTitle')} ({comments.length})
                             </h3>
                         </div>
                         {comments.length === 0 ? (
                             <div className="text-center py-12 bg-charcoal-50/50 border border-dashed border-charcoal-200 text-xs text-charcoal-400 font-light uppercase tracking-wider">
-                                Bu ürüne henüz yorum yapılmamış. İlk yorumu siz yapın!
+                                {t('detail.noCommentsYet')}
                             </div>
                         ) : (
                             <div className="space-y-6 divide-y divide-charcoal-50">
@@ -462,7 +495,7 @@ function ProductDetail() {
                                                             <button 
                                                                 onClick={() => startEditing(comment)}
                                                                 className="text-gold-600 hover:text-gold-700 transition-colors p-1 cursor-pointer"
-                                                                title="Yorumu Düzenle"
+                                                                title={t('detail.editCommentTitle')}
                                                             >
                                                                 <Edit className="w-4 h-4" />
                                                             </button>
@@ -470,7 +503,7 @@ function ProductDetail() {
                                                         <button
                                                             onClick={() => handleDeleteComment(comment.commentId)}
                                                             className="text-red-500 hover:text-red-700 transition-colors p-1 cursor-pointer"
-                                                            title="Yorumu Sil"
+                                                            title={t('detail.deleteCommentTitle')}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -485,7 +518,7 @@ function ProductDetail() {
                                                 {/* Yıldız Derecelendirme Düzenleme */}
                                                 <div className="space-y-1.5">
                                                     <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">
-                                                        Derecelendirmeyi Değiştir
+                                                        {t('detail.changeRatingLabel')}
                                                     </label>
                                                     <div className="flex gap-1.5">
                                                         {[1, 2, 3, 4, 5].map((star) => (
@@ -510,13 +543,13 @@ function ProductDetail() {
                                                 {/* Yorum Metni */}
                                                 <div className="space-y-1">
                                                     <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">
-                                                        Yorumunuz
+                                                        {t('detail.yourCommentLabel')}
                                                     </label>
                                                     <textarea
                                                         rows="3"
                                                         value={editingText}
                                                         onChange={(e) => setEditingText(e.target.value)}
-                                                        placeholder="Yorumunuzu güncelleyin..."
+                                                        placeholder={t('detail.commentPlaceholder')}
                                                         className="w-full bg-white border border-charcoal-100 p-3 outline-none text-sm transition-all duration-300 font-light resize-none focus:border-gold-500"
                                                         required
                                                     />
@@ -529,14 +562,14 @@ function ProductDetail() {
                                                         onClick={() => setEditingCommentId(null)}
                                                         className="text-[10px] tracking-widest text-charcoal-500 hover:text-charcoal-700 font-medium uppercase py-2 px-4 border border-charcoal-200 cursor-pointer transition-all"
                                                     >
-                                                        İptal
+                                                        {t('detail.cancelBtn')}
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => handleUpdateComment(comment.commentId)}
                                                         className="text-[10px] tracking-widest bg-charcoal-900 text-white hover:bg-charcoal-800 font-medium uppercase py-2 px-5 cursor-pointer transition-all shadow-xs"
                                                     >
-                                                        Kaydet
+                                                        {t('detail.saveBtn')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -554,14 +587,14 @@ function ProductDetail() {
                     {/* Sağ - Yorum Formu (1 Kolon) */}
                     <div className="bg-white border border-charcoal-100 p-5 sm:p-8 space-y-6 lg:sticky lg:top-28 shadow-sm">
                         <div>
-                            <h3 className="font-serif text-lg text-charcoal-900 tracking-wide font-light">Deneyiminizi Paylaşın</h3>
-                            <p className="text-charcoal-400 text-xs mt-1">Ürün hakkındaki değerlendirmeniz bizim için değerlidir.</p>
+                            <h3 className="font-serif text-lg text-charcoal-900 tracking-wide font-light">{t('detail.shareExperienceTitle')}</h3>
+                            <p className="text-charcoal-400 text-xs mt-1">{t('detail.shareExperienceSubtitle')}</p>
                             <div className="w-8 h-[1px] bg-gold-400 mt-3" />
                         </div>
                         <form onSubmit={handleCommentSubmit} className="space-y-4">
                             {/* Yıldız Derecelendirme Seçimi */}
                             <div className="space-y-2">
-                                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Derecelendirme</label>
+                                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">{t('detail.ratingFormLabel')}</label>
                                 <div className="flex gap-1.5">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <button
@@ -581,12 +614,12 @@ function ProductDetail() {
 
                             {/* Yorum Metni */}
                             <div className="space-y-2">
-                                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Yorumunuz</label>
+                                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">{t('detail.yourCommentLabel')}</label>
                                 <textarea
                                     rows="4"
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    placeholder="Ürün hakkındaki görüşlerinizi yazın..."
+                                    placeholder={t('detail.commentFormPlaceholder')}
                                     className="w-full bg-charcoal-50/50 border border-charcoal-100 focus:border-gold-500 focus:bg-white text-charcoal-900 p-3 outline-none text-sm transition-all duration-300 font-light resize-none placeholder-charcoal-300"
                                     required
                                 />
@@ -595,7 +628,11 @@ function ProductDetail() {
                             {/* Gönderen Kişi Bilgisi */}
                             {profile && (
                                 <div className="text-[10px] text-charcoal-400 tracking-wide font-light italic">
-                                    <strong>{profile.firstName} {profile.lastName}</strong> olarak yorum yapıyorsunuz.
+                                    {language === 'tr' ? (
+                                        <><strong>{profile.firstName} {profile.lastName}</strong> olarak yorum yapıyorsunuz.</>
+                                    ) : (
+                                        <>You are commenting as <strong>{profile.firstName} {profile.lastName}</strong>.</>
+                                    )}
                                 </div>
                             )}
 
@@ -608,12 +645,12 @@ function ProductDetail() {
                                 {submittingComment ? (
                                     <>
                                         <Loader2 className="w-4 h-4 animate-spin" />
-                                        Gönderiliyor...
+                                        {t('detail.submittingCommentBtn')}
                                     </>
                                 ) : (
                                     <>
                                         <Send className="w-3.5 h-3.5" />
-                                        YORUMU GÖNDER
+                                        {t('detail.submitCommentBtn')}
                                     </>
                                 )}
                             </button>

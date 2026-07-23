@@ -25,7 +25,10 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [basketCount, setBasketCount] = useState(0);
+  const [basketCount, setBasketCount] = useState(() => {
+    const cached = sessionStorage.getItem('basketCount');
+    return cached !== null ? parseInt(cached, 10) : 0;
+  });
   const navigate = useNavigate();
 
   // Profil Güncelleme Modal State'leri
@@ -83,13 +86,16 @@ function Profile() {
             const basketResponse = await api.get('basket');
             const totalQty = basketResponse.data.reduce((acc, item) => acc + item.quantity, 0);
             setBasketCount(totalQty);
+            sessionStorage.setItem('basketCount', totalQty.toString());
           } catch (basketErr) {
             if (basketErr.response && basketErr.response.status === 404) {
               setBasketCount(0);
+              sessionStorage.setItem('basketCount', '0');
             }
           }
         } else {
           setBasketCount(0);
+          sessionStorage.setItem('basketCount', '0');
         }
 
       } catch (err) {
@@ -155,19 +161,9 @@ function Profile() {
   // Çıkış Yapma Mantığı
   const handleLogout = () => {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('basketCount');
     navigate('/');
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-gold-500 mx-auto" />
-          <p className="text-xs tracking-[0.2em] text-charcoal-500 uppercase">Velora Hesabınız Yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-charcoal-900 font-sans antialiased selection:bg-gold-500/20 selection:text-gold-900 flex flex-col">
@@ -178,7 +174,40 @@ function Profile() {
       {/* Profil Paneli Gövdesi */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 flex-1 w-full">
 
-        {error ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-start">
+            {/* Sol Kart - Özet Profil Bilgisi Skeleton */}
+            <div className="bg-white p-6 sm:p-8 border border-charcoal-100 flex flex-col items-center text-center space-y-5 shadow-sm w-full">
+              <div className="w-20 h-20 bg-charcoal-50 rounded-full animate-pulse mx-auto" />
+              <div className="space-y-2 w-full flex flex-col items-center">
+                <div className="h-4 bg-charcoal-100 rounded animate-pulse w-3/4" />
+                <div className="h-3 bg-charcoal-50 rounded animate-pulse w-1/2" />
+              </div>
+              <div className="h-10 bg-charcoal-100 rounded animate-pulse w-full" />
+              <div className="h-10 bg-charcoal-100 rounded animate-pulse w-full" />
+              <div className="w-full pt-5 border-t border-charcoal-50 flex justify-around">
+                <div className="h-4 bg-charcoal-100 rounded animate-pulse w-10" />
+                <div className="h-4 bg-charcoal-100 rounded animate-pulse w-10" />
+              </div>
+            </div>
+
+            {/* Sağ Kart - Detaylı Bilgiler Skeleton */}
+            <div className="md:col-span-2 bg-white p-6 sm:p-8 md:p-10 border border-charcoal-100 space-y-6 sm:space-y-8 shadow-sm">
+              <div className="space-y-2">
+                <div className="h-5 bg-charcoal-100 rounded animate-pulse w-1/3" />
+                <div className="h-3 bg-charcoal-50 rounded animate-pulse w-2/3" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="h-3 bg-charcoal-100 rounded animate-pulse w-16" />
+                    <div className="h-10 bg-charcoal-50 rounded animate-pulse w-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : error ? (
           <div className="bg-red-50 border border-red-200 text-red-700 p-6 text-center space-y-4 max-w-md mx-auto">
             <p className="text-sm font-medium">{error}</p>
             <button

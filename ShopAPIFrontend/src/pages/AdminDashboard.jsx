@@ -21,11 +21,13 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('products');
   const [product, setProduct] = useState([]);
   const [customer, setCustomer] = useState([]);
-  const [order, setOrder] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
+
+  const [order, setOrder] = useState([]);
+  var order2 = []
 
   // 1. Ürün Form Alanları State'leri (JS Entegrasyonunda kullanılacak)
   const [productId, setProductId] = useState('');

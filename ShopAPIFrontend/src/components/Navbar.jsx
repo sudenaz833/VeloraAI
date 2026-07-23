@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import {
   User,
   ShoppingBag,
@@ -16,11 +17,38 @@ import {
 } from 'lucide-react';
 import api from '../api/axiosConfig';
 
+let globalBasketCount = null;
+
 function Navbar({ cartItemsCount }) {
-  const [role, setRole] = useState('User');
+  const { language, changeLanguage, t } = useLanguage();
+  const [role, setRole] = useState(() => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role || 'User';
+      } catch (e) {
+        console.error("Token çözümlenirken hata oluştu:", e);
+      }
+    }
+    return 'User';
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [basketCount, setBasketCount] = useState(0);
+  const [basketCount, setBasketCount] = useState(() => {
+    if (globalBasketCount !== null) {
+      return globalBasketCount;
+    }
+    const cached = sessionStorage.getItem('basketCount');
+    return cached !== null ? parseInt(cached, 10) : 0;
+  });
   const location = useLocation();
+
+  useEffect(() => {
+    if (cartItemsCount !== undefined) {
+      globalBasketCount = cartItemsCount;
+      sessionStorage.setItem('basketCount', cartItemsCount.toString());
+    }
+  }, [cartItemsCount]);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -38,6 +66,8 @@ function Navbar({ cartItemsCount }) {
         .then(res => {
           const totalQty = res.data.reduce((acc, item) => acc + item.quantity, 0);
           setBasketCount(totalQty);
+          globalBasketCount = totalQty;
+          sessionStorage.setItem('basketCount', totalQty.toString());
         })
         .catch(() => setBasketCount(0));
     }
@@ -46,10 +76,10 @@ function Navbar({ cartItemsCount }) {
   const displayCartCount = cartItemsCount !== undefined ? cartItemsCount : basketCount;
 
   const navLinks = [
-    { name: 'Anasayfa', path: '/home', icon: HomeIcon },
-    { name: 'Ürünler', path: '/products', icon: Package },
-    { name: 'AI Cilt Analizi', path: '/skincare-quiz', icon: Sparkles },
-    { name: 'Hakkımızda', path: '/about', icon: Info },
+    { name: t('navbar.home'), path: '/home', icon: HomeIcon },
+    { name: t('navbar.products'), path: '/products', icon: Package },
+    { name: t('navbar.quiz'), path: '/skincare-quiz', icon: Sparkles },
+    { name: t('navbar.about'), path: '/about', icon: Info },
   ];
 
   return (
@@ -59,15 +89,15 @@ function Navbar({ cartItemsCount }) {
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center gap-1.5">
             <Phone className="w-3 h-3 text-gold-400 shrink-0" />
-            <span>0212 345 67 89</span>
+            <span>{t('topbar.phone')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Mail className="w-3 h-3 text-gold-400 shrink-0" />
-            <span>info@velora.com</span>
+            <span>{t('topbar.email')}</span>
           </div>
           <div className="hidden md:flex items-center gap-1.5">
             <MapPin className="w-3 h-3 text-gold-400 shrink-0" />
-            <span>Antalya, Türkiye</span>
+            <span>{t('topbar.address')}</span>
           </div>
         </div>
       </div>
@@ -105,21 +135,30 @@ function Navbar({ cartItemsCount }) {
 
           {/* Sağ Aksiyon İkonları */}
           <div className="flex items-center gap-3 sm:gap-6">
+            {/* Dil Seçici (Language Switcher Toggle) */}
+            <button
+              onClick={() => changeLanguage(language === 'tr' ? 'en' : 'tr')}
+              className="text-[10px] tracking-widest font-semibold uppercase px-2.5 py-1.5 bg-charcoal-50 hover:bg-gold-50 border border-charcoal-100 hover:border-gold-300 rounded text-charcoal-700 hover:text-gold-600 transition-all duration-300 cursor-pointer shadow-sm"
+              title={language === 'tr' ? "Switch to English" : "Türkçe'ye Geç"}
+            >
+              {language.toUpperCase()}
+            </button>
+
             {role === 'Admin' && (
               <Link
                 to="/admin"
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs tracking-widest text-gold-600 hover:text-gold-700 font-semibold uppercase bg-gold-50 px-3 py-1.5 border border-gold-200/60 rounded-sm transition-colors"
-                title="Admin Paneli"
+                title={t('navbar.adminPanel')}
               >
                 <Shield className="w-3.5 h-3.5" />
-                <span>Yönetici Paneli</span>
+                <span>{t('navbar.adminPanel')}</span>
               </Link>
             )}
 
             <Link
               to="/profile"
               className="text-charcoal-600 hover:text-gold-600 transition-colors duration-300 p-2"
-              title="Profilim"
+              title={t('navbar.myProfile')}
             >
               <User className="w-5 h-5 sm:w-5 sm:h-5" />
             </Link>
@@ -128,7 +167,7 @@ function Navbar({ cartItemsCount }) {
               <Link
                 to="/cart"
                 className="text-charcoal-600 hover:text-gold-600 transition-colors duration-300 p-2 relative"
-                title="Sepetim"
+                title={t('navbar.myCart')}
               >
                 <ShoppingBag className="w-5 h-5 sm:w-5 sm:h-5" />
                 {displayCartCount > 0 && (
@@ -143,7 +182,7 @@ function Navbar({ cartItemsCount }) {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-charcoal-800 hover:text-gold-600 transition-colors"
-              aria-label="Menüyü Aç/Kapat"
+              aria-label={t('navbar.mobileMenuOpenClose')}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -181,13 +220,13 @@ function Navbar({ cartItemsCount }) {
                   className="flex items-center gap-3 py-2.5 px-4 text-xs tracking-widest uppercase font-semibold text-gold-700 bg-gold-50 border border-gold-200 mt-2"
                 >
                   <Shield className="w-4 h-4 text-gold-600" />
-                  <span>Yönetici Paneli</span>
+                  <span>{t('navbar.adminPanel')}</span>
                 </Link>
               )}
             </div>
 
             <div className="pt-4 border-t border-charcoal-100 flex items-center justify-between text-[11px] text-charcoal-400 font-light">
-              <span>Velora Luxury Cosmetics</span>
+              <span>{t('navbar.footerSlogan')}</span>
               <span>© 2026</span>
             </div>
           </div>
