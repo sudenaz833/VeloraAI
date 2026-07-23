@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
         "http://localhost:3000",
         "http://localhost:5173", 
-        "https://velora.vercel.app")
+        "https://velora-online.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
