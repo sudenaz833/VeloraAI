@@ -58,7 +58,6 @@ function SkinCareQuiz() {
   const [step, setStep] = useState(1);
   const [currentQuestion, setCurrentQuestion] = useState(1); // 1: SkinType, 2: Concerns, 3: AgeRange, 4: Sensitivity
 
-  // Form State
   const [formData, setFormData] = useState({
     skinType: 'Karma',
     concerns: ['Gözenek', 'Siyah Nokta'],
@@ -94,7 +93,7 @@ function SkinCareQuiz() {
     }
   }, []);
 
-  // Form handlers
+
   const handleSkinTypeSelect = (type) => {
     setFormData((prev) => ({ ...prev, skinType: type }));
   };

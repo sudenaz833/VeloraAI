@@ -82,7 +82,7 @@ Zamansız güzellik felsefesiyle tasarlanan, doğadan ilham alan lüks kozmetik 
 
 ```text
 ShopAPIProject/
-├── ShopAPI/                     # .NET 8 Web API (Backend)
+├── ShopAPIBackend/              # .NET 8 Web API (Backend)
 │   ├── Controllers/             # API Endpoint'leri (Products, Basket, Order, Auth, SkinCare vb.)
 │   ├── Data/                    # DbContext ve EF Core Konfigürasyonları
 │   ├── DTOs/                    # Data Transfer Objects (SkincareRecommendationResponseDto vb.)
@@ -127,7 +127,7 @@ docker-compose up --build
 
 #### **Backend (.NET API)**
 ```bash
-cd ShopAPI
+cd ShopAPIBackend
 # appsettings.json dosyasında veritabanı bağlantınızı ve Groq API anahtarınızı ayarlayın
 dotnet restore
 dotnet ef database update
