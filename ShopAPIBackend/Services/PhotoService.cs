@@ -1,6 +1,7 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using ShopAPI.Settings;
 
@@ -9,19 +10,23 @@ namespace ShopAPI.Services
     public class PhotoService 
     {
         private readonly Cloudinary? _cloudinary;
-        public PhotoService(IOptions<CloudinarySettings> config)
+        public PhotoService(IOptions<CloudinarySettings> config, IConfiguration configuration)
         {
-            if (config.Value != null &&
-                !string.IsNullOrEmpty(config.Value.CloudName) &&
-                !string.IsNullOrEmpty(config.Value.ApiKey) &&
-                !string.IsNullOrEmpty(config.Value.ApiSecret))
+            string? cloudName = config.Value?.CloudName;
+            string? apiKey = config.Value?.ApiKey;
+            string? apiSecret = config.Value?.ApiSecret;
+
+            // Fallback to root configuration or direct environment variables if section binding is empty
+            if (string.IsNullOrEmpty(cloudName)) cloudName = configuration["CloudName"] ?? Environment.GetEnvironmentVariable("CloudName");
+            if (string.IsNullOrEmpty(apiKey)) apiKey = configuration["ApiKey"] ?? Environment.GetEnvironmentVariable("ApiKey");
+            if (string.IsNullOrEmpty(apiSecret)) apiSecret = configuration["ApiSecret"] ?? Environment.GetEnvironmentVariable("ApiSecret");
+
+            if (!string.IsNullOrEmpty(cloudName) &&
+                !string.IsNullOrEmpty(apiKey) &&
+                !string.IsNullOrEmpty(apiSecret))
             {
-                 var Acc = new Account(
-                    config.Value.CloudName,
-                    config.Value.ApiKey,
-                    config.Value.ApiSecret
-                 );
-                _cloudinary = new Cloudinary(Acc);
+                 var Acc = new Account(cloudName, apiKey, apiSecret);
+                 _cloudinary = new Cloudinary(Acc);
             }
         }
 
