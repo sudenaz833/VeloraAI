@@ -142,8 +142,11 @@ function AdminDashboard() {
       setIsModalOpen(false);
     }
     catch (err) {
-      console.error("Ürün kaydedilirken hata oluştu", err);
-      toast.error("Ürün kaydedilirken hata oluştu! Lütfen girdileri kontrol edin.");
+      console.error("Ürün kaydedilirken hata oluştu:", err.response?.data || err);
+      const serverMsg = typeof err.response?.data === 'string' 
+        ? err.response.data 
+        : (err.response?.data?.errors ? Object.values(err.response.data.errors).flat().join(', ') : '');
+      toast.error(serverMsg || "Ürün kaydedilirken hata oluştu! Lütfen girdileri kontrol edin.");
     }
   };
 
