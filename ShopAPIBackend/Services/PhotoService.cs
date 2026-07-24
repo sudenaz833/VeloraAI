@@ -8,19 +8,29 @@ namespace ShopAPI.Services
 {
     public class PhotoService 
     {
-        private readonly Cloudinary _cloudinary;
+        private readonly Cloudinary? _cloudinary;
         public PhotoService(IOptions<CloudinarySettings> config)
         {
-             var Acc = new Account(
-                config.Value.CloudName,
-                config.Value.ApiKey,
-                config.Value.ApiSecret
-             );
-            _cloudinary = new Cloudinary(Acc);
+            if (config.Value != null &&
+                !string.IsNullOrEmpty(config.Value.CloudName) &&
+                !string.IsNullOrEmpty(config.Value.ApiKey) &&
+                !string.IsNullOrEmpty(config.Value.ApiSecret))
+            {
+                 var Acc = new Account(
+                    config.Value.CloudName,
+                    config.Value.ApiKey,
+                    config.Value.ApiSecret
+                 );
+                _cloudinary = new Cloudinary(Acc);
+            }
         }
 
         public async Task<String> AddPhotoAsync(IFormFile file)
         {
+            if (_cloudinary == null)
+            {
+                throw new InvalidOperationException("Cloudinary settings are not configured in the application environment variables or appsettings.json.");
+            }
             var uploadResult = new ImageUploadResult();
             if(file.Length > 0){
                 using var stream = file.OpenReadStream();
