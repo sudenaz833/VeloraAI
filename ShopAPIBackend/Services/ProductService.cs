@@ -23,7 +23,7 @@ namespace ShopAPI.Services
                 {
                     Product = p,
                     BasketCount = _context.Baskets.Count(b => b.ProductId == p.ProductId),
-                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
+                    CommentRatings = p.Comments.Select(c => c.Rating)
                 })
                 .ToListAsync();
 
@@ -32,9 +32,10 @@ namespace ShopAPI.Services
             {
                 var dto = _mapper.Map<ProductReadDto>(item.Product);
                 dto.IsBasketCount = item.BasketCount;
-                dto.CommentCount = item.CommentRatings.Count;
-                dto.AverageRating = item.CommentRatings.Count > 0 
-                    ? Math.Round(item.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
+                var commentRatings = item.CommentRatings.ToList();
+                dto.CommentCount = commentRatings.Count;
+                dto.AverageRating = commentRatings.Count > 0 
+                    ? Math.Round(commentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                     : 0.0;
                 dtos.Add(dto);
             }
@@ -48,7 +49,7 @@ namespace ShopAPI.Services
                 {
                     Product = p,
                     BasketCount = _context.Baskets.Count(b => b.ProductId == id),
-                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
+                    CommentRatings = p.Comments.Select(c => c.Rating)
                 })
                 .FirstOrDefaultAsync();
 
@@ -56,9 +57,10 @@ namespace ShopAPI.Services
 
             var dto = _mapper.Map<ProductReadDto>(productInfo.Product);
             dto.IsBasketCount = productInfo.BasketCount;
-            dto.CommentCount = productInfo.CommentRatings.Count;
-            dto.AverageRating = productInfo.CommentRatings.Count > 0 
-                ? Math.Round(productInfo.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
+            var commentRatings = productInfo.CommentRatings.ToList();
+            dto.CommentCount = commentRatings.Count;
+            dto.AverageRating = commentRatings.Count > 0 
+                ? Math.Round(commentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                 : 0.0;
             return dto;
         }

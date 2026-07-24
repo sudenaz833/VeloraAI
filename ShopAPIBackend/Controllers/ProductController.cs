@@ -39,7 +39,7 @@ namespace ShopAPI.Controllers
             return Ok(product);
         }
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+     [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductReadDto>> CreateProduct([FromForm]ProductCreateDto productDto)
         {
             if (productDto.ImageFile == null || productDto.ImageFile.Length == 0)
@@ -47,15 +47,8 @@ namespace ShopAPI.Controllers
                 return BadRequest("Lütfen bir resim dosyası seçin.");
             }
 
-            try
-            {
-                string imageUrl = await _photoService.AddPhotoAsync(productDto.ImageFile);
-                productDto.ImageUrl = imageUrl;
-            }
-            catch (System.ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            string imageUrl = await _photoService.AddPhotoAsync(productDto.ImageFile);
+            productDto.ImageUrl = imageUrl;
             
             var createdProduct = _productService.CreateProduct(productDto);
             return CreatedAtAction(nameof(GetProductsById), new {id = createdProduct.ProductId}, createdProduct);
@@ -66,15 +59,8 @@ namespace ShopAPI.Controllers
         {
             if (updateDto.ImageFile != null && updateDto.ImageFile.Length > 0)
             {
-                try
-                {
-                    string imageUrl = await _photoService.AddPhotoAsync(updateDto.ImageFile);
-                    updateDto.ImageUrl = imageUrl;
-                }
-                catch (System.ArgumentException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
+                string imageUrl = await _photoService.AddPhotoAsync(updateDto.ImageFile);
+                updateDto.ImageUrl = imageUrl;
             }
 
             var updatedProduct = await _productService.UpdateProductAsync(id, updateDto);
