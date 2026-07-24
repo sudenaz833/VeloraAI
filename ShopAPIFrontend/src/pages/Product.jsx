@@ -9,7 +9,8 @@ import {
   Star,
   ShoppingBag,
   Search,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -195,8 +196,11 @@ function Product() {
 
             {/* Sağ Ürün Izgarası (Grid) Skeleton */}
             <div className="flex-1 w-full space-y-6">
-              {/* Arama Kutusu Skeleton */}
-              <div className="h-12 bg-white border border-charcoal-100 rounded animate-pulse w-full"></div>
+              {/* Arama Kutusu & Sıralama Filtresi Skeleton */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center w-full">
+                <div className="h-12 bg-white border border-charcoal-100 rounded-none animate-pulse flex-1 w-full"></div>
+                <div className="h-12 bg-white border border-charcoal-100 rounded-none animate-pulse w-full sm:w-64 shrink-0"></div>
+              </div>
 
               {/* Grid Cards Skeleton */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -276,7 +280,7 @@ function Product() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={t('products.searchPlaceholder')}
-                    className="w-full bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 placeholder-charcoal-400 text-sm py-3.5 pl-11 pr-10 outline-none transition-all duration-300 shadow-sm"
+                    className="w-full h-12 bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 placeholder-charcoal-400 text-sm pl-11 pr-10 outline-none transition-all duration-300 shadow-sm rounded-none"
                   />
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
                   {searchTerm && (
@@ -290,17 +294,18 @@ function Product() {
                   )}
                 </div>
 
-                <div className="w-full sm:w-64 shrink-0">
+                <div className="relative w-full sm:w-64 shrink-0">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 text-sm py-3.5 px-4 outline-none transition-all duration-300 shadow-sm cursor-pointer"
+                    className="w-full h-12 bg-white border border-charcoal-100 hover:border-gold-300 focus:border-gold-500 text-charcoal-900 text-sm pl-4 pr-10 appearance-none outline-none transition-all duration-300 shadow-sm cursor-pointer rounded-none"
                   >
                     <option value="default">{t('products.sortOptions.default')}</option>
                     <option value="priceAsc">{t('products.sortOptions.priceAsc')}</option>
                     <option value="priceDesc">{t('products.sortOptions.priceDesc')}</option>
                     <option value="ratingDesc">{t('products.sortOptions.ratingDesc')}</option>
                   </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400 pointer-events-none" />
                 </div>
               </div>
 
