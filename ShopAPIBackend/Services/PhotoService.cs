@@ -16,7 +16,25 @@ namespace ShopAPI.Services
             string? apiKey = config.Value?.ApiKey;
             string? apiSecret = config.Value?.ApiSecret;
 
-            // Fallback to root configuration or direct environment variables if section binding is empty
+            // Try parsing if the entire block was added under the single key 'CloudinarySettings' as a JSON string
+            string? rawSettings = configuration["CloudinarySettings"] ?? Environment.GetEnvironmentVariable("CloudinarySettings");
+            if (!string.IsNullOrEmpty(rawSettings) && rawSettings.Trim().StartsWith("{"))
+            {
+                try
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(rawSettings);
+                    var root = doc.RootElement;
+                    if (root.TryGetProperty("CloudName", out var cn)) cloudName = cn.GetString();
+                    if (root.TryGetProperty("ApiKey", out var ak)) apiKey = ak.GetString();
+                    if (root.TryGetProperty("ApiSecret", out var asec)) apiSecret = asec.GetString();
+                }
+                catch
+                {
+                    // Ignore JSON parsing issues and fallback
+                }
+            }
+
+            // Fallback to root configuration or direct environment variables if still empty
             if (string.IsNullOrEmpty(cloudName)) cloudName = configuration["CloudName"] ?? Environment.GetEnvironmentVariable("CloudName");
             if (string.IsNullOrEmpty(apiKey)) apiKey = configuration["ApiKey"] ?? Environment.GetEnvironmentVariable("ApiKey");
             if (string.IsNullOrEmpty(apiSecret)) apiSecret = configuration["ApiSecret"] ?? Environment.GetEnvironmentVariable("ApiSecret");
