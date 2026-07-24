@@ -106,7 +106,7 @@ function AdminDashboard() {
           formData.append('imageUrl', imageUrl);
         }
         if (imageFile) {
-          formData.append('imageFile', imageFile);
+          formData.append('ImageFile', imageFile);
         }
         if (discountPrice) {
           formData.append('discountPrice', parseFloat(discountPrice));
