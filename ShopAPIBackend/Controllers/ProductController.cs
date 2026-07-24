@@ -29,10 +29,10 @@ namespace ShopAPI.Controllers
         }
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public ActionResult<ProductReadDto> GetProductsById(int id)
+        public async Task<ActionResult<ProductReadDto>> GetProductsById(int id)
         {
-            var product = _productService.GetProductById(id);
-            if( product == null) return NotFound("Bu bilgide bir ürün bulunamadı");;
+            var product = await _productService.GetProductByIdAsync(id);
+            if( product == null) return NotFound("Bu bilgide bir ürün bulunamadı");
             return Ok(product);
         }
         [HttpPost]

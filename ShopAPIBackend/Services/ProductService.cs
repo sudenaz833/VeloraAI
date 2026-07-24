@@ -18,31 +18,47 @@ namespace ShopAPI.Services
         }
         public async Task<IEnumerable<ProductReadDto>> GetAllProductsAsync()
         {
-            var products = await _context.Products.ToListAsync();
-            var dtos = _mapper.Map<IEnumerable<ProductReadDto>>(products).ToList();
-            foreach (var dto in dtos)
+            var productsWithDetails = await _context.Products
+                .Select(p => new
+                {
+                    Product = p,
+                    BasketCount = _context.Baskets.Count(b => b.ProductId == p.ProductId),
+                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
+                })
+                .ToListAsync();
+
+            var dtos = new List<ProductReadDto>();
+            foreach (var item in productsWithDetails)
             {
-                dto.IsBasketCount = await _context.Baskets.CountAsync(b => b.ProductId == dto.ProductId);
-                
-                var comments = await _context.Comments.Where(c => c.ProductId == dto.ProductId).ToListAsync();
-                dto.CommentCount = comments.Count;
-                dto.AverageRating = comments.Count > 0 
-                    ? Math.Round(comments.Average(c => double.TryParse(c.Rating, out double r) ? r : 0.0), 1) 
+                var dto = _mapper.Map<ProductReadDto>(item.Product);
+                dto.IsBasketCount = item.BasketCount;
+                dto.CommentCount = item.CommentRatings.Count;
+                dto.AverageRating = item.CommentRatings.Count > 0 
+                    ? Math.Round(item.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                     : 0.0;
+                dtos.Add(dto);
             }
             return dtos;
         }
-        public ProductReadDto? GetProductById(int id)
+        public async Task<ProductReadDto?> GetProductByIdAsync(int id)
         {
-            var product = _context.Products.Find(id);
-            if(product == null) return null;
-            var dto = _mapper.Map<ProductReadDto>(product);
-            dto.IsBasketCount = _context.Baskets.Count(b => b.ProductId == id);
-            
-            var comments = _context.Comments.Where(c => c.ProductId == id).ToList();
-            dto.CommentCount = comments.Count;
-            dto.AverageRating = comments.Count > 0 
-                ? Math.Round(comments.Average(c => double.TryParse(c.Rating, out double r) ? r : 0.0), 1) 
+            var productInfo = await _context.Products
+                .Where(p => p.ProductId == id)
+                .Select(p => new
+                {
+                    Product = p,
+                    BasketCount = _context.Baskets.Count(b => b.ProductId == id),
+                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (productInfo == null) return null;
+
+            var dto = _mapper.Map<ProductReadDto>(productInfo.Product);
+            dto.IsBasketCount = productInfo.BasketCount;
+            dto.CommentCount = productInfo.CommentRatings.Count;
+            dto.AverageRating = productInfo.CommentRatings.Count > 0 
+                ? Math.Round(productInfo.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                 : 0.0;
             return dto;
         }

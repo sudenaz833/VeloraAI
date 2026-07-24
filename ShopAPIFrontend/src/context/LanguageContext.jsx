@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { translations } from '../locales/translations';
 
 const LanguageContext = createContext();
@@ -17,7 +17,7 @@ export function LanguageProvider({ children }) {
   };
 
   // Helper to translate key path e.g. "navbar.home"
-  const t = (keyPath) => {
+  const t = useCallback((keyPath) => {
     const keys = keyPath.split('.');
     let result = translations[language];
 
@@ -30,7 +30,7 @@ export function LanguageProvider({ children }) {
       }
     }
     return result;
-  };
+  }, [language]);
 
   return (
     <LanguageContext.Provider value={{ language, changeLanguage, t }}>

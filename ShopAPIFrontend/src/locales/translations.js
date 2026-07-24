@@ -175,6 +175,17 @@ export const translations = {
       commentAddedToast: "Yorumunuz başarıyla eklendi.",
       commentDeletedToast: "Yorumunuz başarıyla silindi.",
       commentUpdatedToast: "Yorum başarıyla güncellendi."
+    },
+    about: {
+      storyTitle: "Hikayemiz",
+      storyPara1: "Velora kozmetik'in doğuşu, doğa ve doğallığın üstün gücü ile bilimsel inovasyonun kesiştiği yerde başlar. Her bir damlamızda, doğanın bize sunduğu en saf ve zengin bileşenleri, en modern laboratuvar teknikleriyle bir araya getiriyoruz.",
+      storyPara2: "Güzellik algısının hızla değiştiği bu dünyada, biz zamansız ve yalın olanın peşindeyiz. Velora’da her bir ürün, doğanın sunduğu mucizevi dokunuşları modern bilimin güvenilirliğiyle birleştiriyor. Cildinin ihtiyaç duyduğu o saf dokuyu, sürdürülebilir ve etik değerlere bağlı kalarak hazırlıyoruz. Çünkü inanıyoruz ki; gerçek güzellik, doğayla uyum içinde olduğunda ortaya çıkar.",
+      valuesTitle: "Değerlerimiz",
+      valuesPara: "Velora kozmetik olarak biyoteknolojik gelişmeleri yakından takip ederek, cildinize en iyi sonuçları veren yenilikçi formüller geliştiriyoruz. Doğanın zengin özlerini en gelişmiş cilt molekülleriyle birleştiriyor ve dermatolojik olarak onaylanmış üstün formüller üretiyoruz.",
+      naturalIngredientsTitle: "Doğal İçerikler",
+      naturalIngredientsDesc: "%100 temiz ve sürdürülebilir bitki özleri.",
+      dermApprovalTitle: "Dermatolojik Onay",
+      dermApprovalDesc: "Hassas ciltler dahil tüm tipler için güvenli testler."
     }
   },
   en: {
@@ -353,6 +364,17 @@ export const translations = {
       commentAddedToast: "Your comment was successfully added.",
       commentDeletedToast: "Your comment was successfully deleted.",
       commentUpdatedToast: "Comment successfully updated."
+    },
+    about: {
+      storyTitle: "Our Story",
+      storyPara1: "The birth of Velora Cosmetics begins at the intersection of the superior power of nature & naturalness and scientific innovation. In every drop, we combine the cleanest and richest ingredients offered by nature with the most modern laboratory techniques.",
+      storyPara2: "In this rapidly changing world of beauty perception, we pursue the timeless and the simple. At Velora, each product combines the miraculous touches of nature with the reliability of modern science. We prepare the pure texture your skin needs, adhering to sustainable and ethical values. Because we believe that true beauty emerges when it is in harmony with nature.",
+      valuesTitle: "Our Values",
+      valuesPara: "As Velora Cosmetics, we closely follow biotechnological developments and develop innovative formulas that give the best results for your skin. We combine the rich essences of nature with the most advanced skin molecules and produce dermatologically approved superior formulas.",
+      naturalIngredientsTitle: "Natural Ingredients",
+      naturalIngredientsDesc: "100% clean and sustainable plant extracts.",
+      dermApprovalTitle: "Dermatological Approval",
+      dermApprovalDesc: "Safe testing for all types, including sensitive skin."
     }
   }
 };

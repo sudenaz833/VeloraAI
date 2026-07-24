@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -529,6 +530,7 @@ function Profile() {
         </div>
       )}
 
+      <Footer />
     </div>
   );
 }

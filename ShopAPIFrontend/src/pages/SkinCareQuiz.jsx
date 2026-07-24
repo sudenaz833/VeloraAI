@@ -15,6 +15,7 @@ import {
   Clock
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import api from '../api/axiosConfig';
 import { toast } from 'react-toastify';
 
@@ -568,12 +569,13 @@ function SkinCareQuiz() {
         </div>
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-charcoal-950 text-charcoal-300 py-8 border-t border-charcoal-800 text-center text-xs text-charcoal-500 font-light">
+      {/* AI DISCLAIMER & FOOTER */}
+      <div className="bg-charcoal-900/40 text-charcoal-500 py-6 border-t border-charcoal-100 text-center text-xs font-light">
         <div className="max-w-7xl mx-auto px-4">
           <p>© 2026 VELORA Luxury Cosmetics. AI Dermatolog Tavsiyeleri Bilgilendirme Amaçlıdır.</p>
         </div>
-      </footer>
+      </div>
+      <Footer />
     </div>
   );
 }

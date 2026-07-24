@@ -19,6 +19,7 @@ import {
     Target
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const translateSkinType = (type, language) => {
     if (language === 'tr') return type;
@@ -84,11 +85,13 @@ function ProductDetail() {
             try {
                 setLoading(true);
                 setError(null);
-                const productRes = await api.get(`products/${id}`);
+                const [productRes, commentRes, profileRes] = await Promise.all([
+                    api.get(`products/${id}`),
+                    api.get(`comments/product/${id}`),
+                    api.get('customers/my-profile')
+                ]);
                 setProduct(productRes.data);
-                const commentRes = await api.get(`comments/product/${id}`);
                 setComments(commentRes.data);
-                const profileRes = await api.get('customers/my-profile');
                 setProfile(profileRes.data);
             } catch (err) {
                 console.error("Detay sayfası yükleme hatası:", err);
@@ -656,9 +659,9 @@ function ProductDetail() {
                             </button>
                         </form>
                     </div>
-
                 </div>
             </main>
+            <Footer />
         </div>
     );
 }
