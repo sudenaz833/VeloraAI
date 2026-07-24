@@ -19,22 +19,29 @@ namespace ShopAPI.Services
             _cloudinary = new Cloudinary(Acc);
         }
 
-        public async Task<String> AddPhotoAsync(IFormFile file)
+        public async Task<string?> AddPhotoAsync(IFormFile file)
         {
-            var uploadResult = new ImageUploadResult();
-            if(file.Length > 0){
-                using var stream = file.OpenReadStream();
-                var uploadParams = new ImageUploadParams
-                {
-                    File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation()
-                        .Height(500)
-                        .Width(500)
-                        .Crop("fill")
-                };
-             uploadResult = await _cloudinary.UploadAsync(uploadParams);
-            }    
-            return uploadResult.SecureUrl.ToString();
+            // 1. KORUMA KALKANI: Dosya boşsa hiç zorlama, direkt geri dön!
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+
+            using var stream = file.OpenReadStream();
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Transformation = new Transformation()
+                    .Height(500)
+                    .Width(500)
+                    .Crop("fill")
+            };
+            
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            
+            // 2. KORUMA KALKANI: Soru işaretleri (?) sayesinde SecureUrl null ise 
+            // sistem çökmez, geriye sadece 'null' döndürür.
+            return uploadResult?.SecureUrl?.ToString();
         }
     }
 }
