@@ -101,6 +101,14 @@ function AdminDashboard() {
       return;
     }
 
+    if (imageFile) {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.webp|\.heic)$/i;
+      if (!allowedExtensions.exec(imageFile.name)) {
+        toast.warning("Yalnızca resim dosyaları (.jpg, .jpeg, .png, .gif, .webp, .heic) yüklenebilir.");
+        return;
+      }
+    }
+
     const formData = new FormData();
     formData.append('productName', productName);
     formData.append('price', price);
