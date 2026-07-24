@@ -42,43 +42,25 @@ namespace ShopAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductReadDto>> CreateProduct([FromForm]ProductCreateDto productDto)
         {
-            if (productDto.ImageFile == null || productDto.ImageFile.Length == 0)
-            {
-                return BadRequest("Lütfen bir resim dosyası seçin.");
-            }
-
-            try
+            if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
             {
                 string imageUrl = await _photoService.AddPhotoAsync(productDto.ImageFile);
                 productDto.ImageUrl = imageUrl;
             }
-            catch (InvalidOperationException ex)
+            else if (string.IsNullOrWhiteSpace(productDto.ImageUrl))
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Lütfen bir resim dosyası seçin veya geçerli bir resim URL'si girin.");
             }
-            
-            var createdProduct = await _productService.CreateProductAsync(productDto);
+
+            var createdProduct = _productService.CreateProduct(productDto);
             return CreatedAtAction(nameof(GetProductsById), new {id = createdProduct.ProductId}, createdProduct);
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> UpdateProductsAsync([FromForm] ProductUpdateDto updateDto, int id)
+        public async Task <ActionResult> UpdateProductsAsync(ProductUpdateDto updateDto,int id)
         {
-            if (updateDto.ImageFile != null && updateDto.ImageFile.Length > 0)
-            {
-                try
-                {
-                    string imageUrl = await _photoService.AddPhotoAsync(updateDto.ImageFile);
-                    updateDto.ImageUrl = imageUrl;
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-            }
-
-            var updatedProduct = await _productService.UpdateProductAsync(id, updateDto);
-            if (updatedProduct == null) return NotFound("Ürün bulunamadı");
+            var updatedProduct = await _productService.UpdateProductAsync(id,updateDto);
+            if(updatedProduct == null) return NotFound("Ürün bulunamadı");
             return Ok(updatedProduct);
         }
         [HttpDelete("{id}")]

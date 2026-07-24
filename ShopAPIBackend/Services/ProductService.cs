@@ -23,7 +23,7 @@ namespace ShopAPI.Services
                 {
                     Product = p,
                     BasketCount = _context.Baskets.Count(b => b.ProductId == p.ProductId),
-                    CommentRatings = p.Comments.Select(c => c.Rating)
+                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
                 })
                 .ToListAsync();
 
@@ -32,10 +32,9 @@ namespace ShopAPI.Services
             {
                 var dto = _mapper.Map<ProductReadDto>(item.Product);
                 dto.IsBasketCount = item.BasketCount;
-                var commentRatings = item.CommentRatings.ToList();
-                dto.CommentCount = commentRatings.Count;
-                dto.AverageRating = commentRatings.Count > 0 
-                    ? Math.Round(commentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
+                dto.CommentCount = item.CommentRatings.Count;
+                dto.AverageRating = item.CommentRatings.Count > 0 
+                    ? Math.Round(item.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                     : 0.0;
                 dtos.Add(dto);
             }
@@ -49,7 +48,7 @@ namespace ShopAPI.Services
                 {
                     Product = p,
                     BasketCount = _context.Baskets.Count(b => b.ProductId == id),
-                    CommentRatings = p.Comments.Select(c => c.Rating)
+                    CommentRatings = p.Comments.Select(c => c.Rating).ToList()
                 })
                 .FirstOrDefaultAsync();
 
@@ -57,14 +56,13 @@ namespace ShopAPI.Services
 
             var dto = _mapper.Map<ProductReadDto>(productInfo.Product);
             dto.IsBasketCount = productInfo.BasketCount;
-            var commentRatings = productInfo.CommentRatings.ToList();
-            dto.CommentCount = commentRatings.Count;
-            dto.AverageRating = commentRatings.Count > 0 
-                ? Math.Round(commentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
+            dto.CommentCount = productInfo.CommentRatings.Count;
+            dto.AverageRating = productInfo.CommentRatings.Count > 0 
+                ? Math.Round(productInfo.CommentRatings.Average(r => double.TryParse(r, out double val) ? val : 0.0), 1) 
                 : 0.0;
             return dto;
         }
-        public async Task<ProductReadDto> CreateProductAsync(ProductCreateDto dto)
+        public ProductReadDto CreateProduct(ProductCreateDto dto)
         {
             if (dto.DiscountExpiresAt.HasValue)
             {
@@ -73,7 +71,7 @@ namespace ShopAPI.Services
             //DTO'yu Entity'ye cevirme
             var product = _mapper.Map<Product>(dto);
             _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             //Entity'yi DTO'ya cevirme
             var readDto = _mapper.Map<ProductReadDto>(product);
             readDto.IsBasketCount = 0; // Yeni ürün olduğu için sepette olamaz
