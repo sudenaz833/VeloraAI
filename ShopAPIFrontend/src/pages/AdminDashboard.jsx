@@ -38,6 +38,7 @@ function AdminDashboard() {
   const [imageUrl, setImageUrl] = useState('');
   const [discountPrice, setDiscountPrice] = useState('');
   const [discountExpiresAt, setDiscountExpiresAt] = useState('');
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -93,25 +94,48 @@ function AdminDashboard() {
 
 
   const handleAddOrUpdateProduct = async (e) => {
-    e.preventDefault();//SAYFA YENİLENMESİN!!!!!!!!
-    const productData = {
-      productName,
-      price: parseFloat(price),
-      stock: parseInt(stock),
-      category,
-      imageUrl,
-      discountPrice: discountPrice ? parseFloat(discountPrice) : null,
-      discountExpiresAt: discountExpiresAt ? discountExpiresAt : null
-    };
+    e.preventDefault(); // SAYFA YENİLENMESİN
+
+    if (modalMode === 'add' && !imageFile) {
+      toast.warning("Lütfen bir ürün görseli seçin.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('productName', productName);
+    formData.append('price', price);
+    formData.append('stock', stock);
+    formData.append('category', category);
+
+    if (imageFile) {
+      formData.append('imageFile', imageFile);
+    } else {
+      formData.append('imageUrl', imageUrl || '');
+    }
+
+    if (discountPrice) {
+      formData.append('discountPrice', discountPrice);
+    }
+    if (discountExpiresAt) {
+      formData.append('discountExpiresAt', discountExpiresAt);
+    }
+
     try {
       if (modalMode === 'add') { // yeni ürün ekleme
-        const response = await api.post('products', productData);
+        const response = await api.post('products', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         setProduct([...product, response.data]);
         toast.success("Ürün başarıyla eklendi");
       }
-      else if(modalMode ==='edit'){ // api/products/{id} güncelleme
-        const updateResponse = await api.put(`products/${productId}`, productData);
-        // eskisi ve yenisi yer değiştiriyor.
+      else if(modalMode === 'edit'){ // api/products/{id} güncelleme
+        const updateResponse = await api.put(`products/${productId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         setProduct(product.map(p => p.productId === parseInt(productId) ? updateResponse.data : p));
         toast.success("Ürün başarıyla güncellendi.");
       }
@@ -208,6 +232,7 @@ function AdminDashboard() {
     setStock(product.stock);
     setCategory(product.category);
     setImageUrl(product.imageUrl);
+    setImageFile(null);
     setDiscountPrice(product.discountPrice || '');
     setDiscountExpiresAt(product.discountExpiresAt ? product.discountExpiresAt.substring(0, 16) : '');
     setIsModalOpen(true);
@@ -221,6 +246,7 @@ function AdminDashboard() {
     setStock('');
     setCategory('Cilt Bakımı');
     setImageUrl('');
+    setImageFile(null);
     setDiscountPrice('');
     setDiscountExpiresAt('');
     setIsModalOpen(true);
@@ -643,16 +669,21 @@ function AdminDashboard() {
                 </select>
               </div>
 
-              {/* Resim Yolu */}
-              <div className="space-y-1">
-                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Görsel URL / Yolu</label>
+              {/* Görsel Yükleme */}
+              <div className="space-y-2">
+                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Görsel Yükle</label>
                 <input
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="/images/product1.png"
-                  className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-3 focus:border-gold-500 focus:outline-none"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                  className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-3 focus:border-gold-500 focus:outline-none file:mr-4 file:py-1 file:px-3 file:border file:border-charcoal-200 file:bg-white file:text-xs file:font-semibold hover:file:bg-charcoal-50 cursor-pointer"
                 />
+                {imageUrl && (
+                  <div className="flex items-center gap-3 mt-1.5 p-2 bg-[#FAF8F5] border border-charcoal-100">
+                    <img src={imageUrl} alt="Mevcut Görsel" className="w-12 h-12 object-cover border border-charcoal-200" />
+                    <span className="text-[10px] text-charcoal-500 truncate max-w-[200px]">{imageUrl}</span>
+                  </div>
+                )}
               </div>
 
               {/* Form Butonları */}

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace ShopAPI.DTOs
 {
     public class ProductUpdateDto
@@ -8,6 +10,7 @@ namespace ShopAPI.DTOs
         public string? ImageUrl { get; set; }
         public string? Category { get; set;}
         public decimal? DiscountPrice{get; set;}
+        public IFormFile? ImageFile { get; set; }
         public DateTime? DiscountExpiresAt{get; set;}
     }
 }

@@ -7,6 +7,7 @@ using ShopAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ShopAPI.Mappings;
+using ShopAPI.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using ShopAPI.Validators;
@@ -27,6 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<ProductCreateDtoValidator>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddDbContext<ShopDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -39,6 +41,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICommentService,CommentService>();
 builder.Services.AddScoped<GroqService>();
+builder.Services.AddScoped<PhotoService>();
 
 builder.Services.AddCors(options =>
 {

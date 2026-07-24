@@ -16,9 +16,12 @@ namespace ShopAPI.Controllers
     public class ProductsController : ControllerBase
     { 
         private readonly IProductService _productService;
-        public  ProductsController(IProductService productService)
+        private readonly PhotoService _photoService;
+        
+        public  ProductsController(IProductService productService, PhotoService photoService)
         {
             _productService = productService;
+            _photoService = photoService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -37,18 +40,31 @@ namespace ShopAPI.Controllers
         }
         [HttpPost]
      [Authorize(Roles = "Admin")]
-        public ActionResult<ProductReadDto> CreateProducts(ProductCreateDto productDto)
+        public async Task<ActionResult<ProductReadDto>> CreateProduct([FromForm]ProductCreateDto productDto)
         {
-            var createdProduct = _productService.CreateProduct(productDto);
-            return CreatedAtAction(nameof(GetProductsById), new {id= createdProduct.ProductId},createdProduct);
+            if (productDto.ImageFile == null || productDto.ImageFile.Length == 0)
+            {
+                return BadRequest("Lütfen bir resim dosyası seçin.");
+            }
+
+            string imageUrl = await _photoService.AddPhotoAsync(productDto.ImageFile);
+            productDto.ImageUrl = imageUrl;
             
+            var createdProduct = _productService.CreateProduct(productDto);
+            return CreatedAtAction(nameof(GetProductsById), new {id = createdProduct.ProductId}, createdProduct);
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task <ActionResult> UpdateProductsAsync(ProductUpdateDto updateDto,int id)
+        public async Task<ActionResult> UpdateProductsAsync([FromForm] ProductUpdateDto updateDto, int id)
         {
-            var updatedProduct = await _productService.UpdateProductAsync(id,updateDto);
-            if(updatedProduct == null) return NotFound("Ürün bulunamadı");
+            if (updateDto.ImageFile != null && updateDto.ImageFile.Length > 0)
+            {
+                string imageUrl = await _photoService.AddPhotoAsync(updateDto.ImageFile);
+                updateDto.ImageUrl = imageUrl;
+            }
+
+            var updatedProduct = await _productService.UpdateProductAsync(id, updateDto);
+            if (updatedProduct == null) return NotFound("Ürün bulunamadı");
             return Ok(updatedProduct);
         }
         [HttpDelete("{id}")]
