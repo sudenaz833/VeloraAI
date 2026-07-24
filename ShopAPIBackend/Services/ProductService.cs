@@ -64,7 +64,7 @@ namespace ShopAPI.Services
                 : 0.0;
             return dto;
         }
-        public ProductReadDto CreateProduct(ProductCreateDto dto)
+        public async Task<ProductReadDto> CreateProductAsync(ProductCreateDto dto)
         {
             if (dto.DiscountExpiresAt.HasValue)
             {
@@ -73,7 +73,7 @@ namespace ShopAPI.Services
             //DTO'yu Entity'ye cevirme
             var product = _mapper.Map<Product>(dto);
             _context.Products.Add(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             //Entity'yi DTO'ya cevirme
             var readDto = _mapper.Map<ProductReadDto>(product);
             readDto.IsBasketCount = 0; // Yeni ürün olduğu için sepette olamaz

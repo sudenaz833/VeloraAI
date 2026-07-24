@@ -50,7 +50,7 @@ namespace ShopAPI.Controllers
             string imageUrl = await _photoService.AddPhotoAsync(productDto.ImageFile);
             productDto.ImageUrl = imageUrl;
             
-            var createdProduct = _productService.CreateProduct(productDto);
+            var createdProduct = await _productService.CreateProductAsync(productDto);
             return CreatedAtAction(nameof(GetProductsById), new {id = createdProduct.ProductId}, createdProduct);
         }
         [HttpPut("{id}")]
