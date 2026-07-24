@@ -39,6 +39,7 @@ function AdminDashboard() {
   const [discountPrice, setDiscountPrice] = useState('');
   const [discountExpiresAt, setDiscountExpiresAt] = useState('');
   const [imageFile, setImageFile] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -93,6 +94,47 @@ function AdminDashboard() {
   }, [navigate]);
 
 
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+            resolve(compressedFile);
+          }, 'image/jpeg', 0.7);
+        };
+      };
+    });
+  };
+
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault(); // SAYFA YENİLENMESİN
 
@@ -101,26 +143,33 @@ function AdminDashboard() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('productName', productName);
-    formData.append('price', price);
-    formData.append('stock', stock);
-    formData.append('category', category);
-
-    if (imageFile) {
-      formData.append('imageFile', imageFile);
-    } else {
-      formData.append('imageUrl', imageUrl || '');
-    }
-
-    if (discountPrice) {
-      formData.append('discountPrice', discountPrice);
-    }
-    if (discountExpiresAt) {
-      formData.append('discountExpiresAt', discountExpiresAt);
-    }
+    setIsSaving(true);
 
     try {
+      const formData = new FormData();
+      formData.append('productName', productName);
+      formData.append('price', price);
+      formData.append('stock', stock);
+      formData.append('category', category);
+
+      let fileToUpload = imageFile;
+      if (imageFile) {
+        fileToUpload = await compressImage(imageFile);
+      }
+
+      if (fileToUpload) {
+        formData.append('imageFile', fileToUpload);
+      } else {
+        formData.append('imageUrl', imageUrl || '');
+      }
+
+      if (discountPrice) {
+        formData.append('discountPrice', discountPrice);
+      }
+      if (discountExpiresAt) {
+        formData.append('discountExpiresAt', discountExpiresAt);
+      }
+
       if (modalMode === 'add') { // yeni ürün ekleme
         const response = await api.post('products', formData, {
           headers: {
@@ -147,6 +196,9 @@ function AdminDashboard() {
         ? err.response.data 
         : (err.response?.data?.errors ? Object.values(err.response.data.errors).flat().join(', ') : '');
       toast.error(serverMsg || "Ürün kaydedilirken hata oluştu! Lütfen girdileri kontrol edin.");
+    }
+    finally {
+      setIsSaving(false);
     }
   };
 
@@ -693,16 +745,20 @@ function AdminDashboard() {
               <div className="flex gap-3 pt-4 border-t border-charcoal-100">
                 <button
                   type="button"
+                  disabled={isSaving}
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 bg-transparent border border-charcoal-200 text-charcoal-600 text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-50"
+                  className="flex-1 bg-transparent border border-charcoal-200 text-charcoal-600 text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-50 disabled:opacity-50"
                 >
                   İptal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-charcoal-900 text-white text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-800"
+                  disabled={isSaving}
+                  className={`flex-1 text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-800 disabled:opacity-50 ${
+                    isSaving ? 'bg-charcoal-400 text-charcoal-200 cursor-not-allowed' : 'bg-charcoal-900 text-white'
+                  }`}
                 >
-                  Kaydet
+                  {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
                 </button>
               </div>
 
