@@ -39,6 +39,7 @@ function AdminDashboard() {
   const [discountPrice, setDiscountPrice] = useState('');
   const [discountExpiresAt, setDiscountExpiresAt] = useState('');
   const [imageFile, setImageFile] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -96,6 +97,7 @@ function AdminDashboard() {
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();//SAYFA YENİLENMESİN!!!!!!!!
     try {
+      setIsSaving(true);
       if (modalMode === 'add') { // yeni ürün ekleme
         const formData = new FormData();
         formData.append('productName', productName);
@@ -143,6 +145,8 @@ function AdminDashboard() {
     catch (err) {
       console.error("Ürün kaydedilirken hata oluştu", err);
       toast.error("Ürün kaydedilirken hata oluştu! Lütfen girdileri kontrol edin.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -668,27 +672,30 @@ function AdminDashboard() {
                 </select>
               </div>
 
-              {/* Resim Yolu */}
-              <div className="space-y-1">
-                <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Görsel URL / Yolu</label>
-                <input
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="/images/product1.png"
-                  className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-3 focus:border-gold-500 focus:outline-none"
-                />
-              </div>
+              {/* Resim Yolu (Sadece Düzenleme Modunda Görünsün) */}
+              {modalMode === 'edit' && (
+                <div className="space-y-1">
+                  <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Görsel URL / Yolu</label>
+                  <input
+                    type="text"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="/images/product1.png"
+                    className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-3 focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+              )}
 
-              {/* Veya Görsel Yükle */}
+              {/* Görsel Yükle (Sadece Ekleme Modunda Görünsün) */}
               {modalMode === 'add' && (
                 <div className="space-y-1">
-                  <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Veya Görsel Yükle (Cloudinary)</label>
+                  <label className="text-[10px] tracking-widest text-gold-600 uppercase font-semibold block">Görsel Yükle (Cloudinary)</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setImageFile(e.target.files[0])}
                     className="w-full bg-[#FAF8F5] border border-charcoal-200 text-xs p-2.5 focus:border-gold-500 focus:outline-none"
+                    required
                   />
                 </div>
               )}
@@ -704,9 +711,10 @@ function AdminDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-charcoal-900 text-white text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-800"
+                  disabled={isSaving}
+                  className="flex-1 bg-charcoal-900 text-white text-xs uppercase py-3 font-medium tracking-wider hover:bg-charcoal-800 disabled:bg-charcoal-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Kaydet
+                  {isSaving ? "Kaydediliyor..." : "Kaydet"}
                 </button>
               </div>
 
